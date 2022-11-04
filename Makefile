@@ -47,7 +47,7 @@ LIB=$(MTH) $(PTHREAD) $(NETINET)
 ###############################################################################
 
 # Directorios con elementos de uso común
-COMMON=client/helpers
+COMMON=client/helpers server/server_structures server/socket
 
 # Directorios que serán compilados a un programa
 PROGRAMS=client server

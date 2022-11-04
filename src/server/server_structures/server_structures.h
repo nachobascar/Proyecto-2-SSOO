@@ -25,7 +25,7 @@ typedef struct lobby {
   struct lobby_node* last;
 } lobby;
 
-typedef struct game {
+typedef struct server {
   int socket;
 
   lobby lobby;
@@ -33,8 +33,8 @@ typedef struct game {
 
   room rooms[10];
   int rooms_size;
-} game;
+} server;
 
-game init_game(int socket);
+server init_server(int socket);
 void init_room(room* room);
 void init_player(player* player, int socket, char* name);

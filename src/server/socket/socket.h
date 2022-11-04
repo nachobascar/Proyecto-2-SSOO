@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-#include "../game_structures/game_structures.h"
+#include "../server_structures/server_structures.h"
 
 int create_socket(char *ip_address, int port);
-int accept_connections(int socket_fd, game game);
+int accept_connections(int socket_fd, server server);

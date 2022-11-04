@@ -21,7 +21,7 @@ int create_socket(char *ip_address, int port) {
   return socket_fd;
 }
 
-void handle_package(int client_socket_fd, char buffer[257], game game) {
+void handle_package(int client_socket_fd, char buffer[257], server server) {
   switch (buffer[0])
   {
   case 0: ;
@@ -34,7 +34,7 @@ void handle_package(int client_socket_fd, char buffer[257], game game) {
     player_name[i] = '\0';
 
     // Create player and add to the lobby
-    // init_player(client_socket_fd, player_name, game);
+    // init_player(client_socket_fd, player_name, server);
     printf("Player %s joined the lobby\n", player_name);
 
     break;
@@ -46,12 +46,12 @@ void handle_package(int client_socket_fd, char buffer[257], game game) {
 
 struct connection_init_args {
   int client_socket_fd;
-  game game;
+  server server;
 };
 
 void *handle_client(void *args) {
   int client_socket_fd = ((struct connection_init_args*) args)->client_socket_fd;
-  game game = ((struct connection_init_args*) args)->game;
+  server server = ((struct connection_init_args*) args)->server;
 
   char buffer[257];
   while (1) {
@@ -68,11 +68,11 @@ void *handle_client(void *args) {
       exit(EXIT_FAILURE);
     }
 
-    handle_package(client_socket_fd, buffer, game);
+    handle_package(client_socket_fd, buffer, server);
   }
 }
 
-int accept_connections(int socket_fd, game game) {
+int accept_connections(int socket_fd, server server) {
   while (1) {
     struct sockaddr_in client_address;
     socklen_t client_address_length = sizeof(client_address);
@@ -86,7 +86,7 @@ int accept_connections(int socket_fd, game game) {
 
     struct connection_init_args args;
     args.client_socket_fd = client_socket_fd;
-    args.game = game;
+    args.server = server;
 
     // Start thread for client
     pthread_t thread;

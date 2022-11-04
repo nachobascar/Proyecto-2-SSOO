@@ -25,10 +25,10 @@ int main(int argc, char *argv[]) {
     int socket_fd = create_socket(ip_address, tcp_port);
     printf("Socket created\n");
 
-    game game = init_game(socket_fd);
+    server server = init_server(socket_fd);
 
     // Listen for connections
-    accept_connections(socket_fd, game);
+    accept_connections(socket_fd, server);
 
     close(socket_fd);
     printf("Socket closed\n");
