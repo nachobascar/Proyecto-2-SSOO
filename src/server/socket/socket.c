@@ -1,5 +1,6 @@
 #include "socket.h"
 
+// Create the socket and open the connection of the server
 int create_socket(char *ip_address, int port) {
   int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd < 0) {
@@ -21,6 +22,7 @@ int create_socket(char *ip_address, int port) {
   return socket_fd;
 }
 
+// Handle the message sent from client
 void handle_package(int client_socket_fd, char buffer[257], server server) {
   switch (buffer[0])
   {
@@ -44,11 +46,14 @@ void handle_package(int client_socket_fd, char buffer[257], server server) {
   }
 }
 
+// Data structure to pass multiple arguments to the thread
 struct connection_init_args {
   int client_socket_fd;
   server server;
 };
 
+
+// Handle the connection with the client
 void *handle_client(void *args) {
   int client_socket_fd = ((struct connection_init_args*) args)->client_socket_fd;
   server server = ((struct connection_init_args*) args)->server;
@@ -72,6 +77,7 @@ void *handle_client(void *args) {
   }
 }
 
+// Start listening for connections
 int accept_connections(int socket_fd, server server) {
   while (1) {
     struct sockaddr_in client_address;

@@ -12,5 +12,8 @@
 
 #include "../server_structures/server_structures.h"
 
+// Create the socket and open the connection of the server
 int create_socket(char *ip_address, int port);
+
+// Start listening for connections
 int accept_connections(int socket_fd, server server);

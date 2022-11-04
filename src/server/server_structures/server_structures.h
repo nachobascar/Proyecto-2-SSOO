@@ -35,6 +35,11 @@ typedef struct server {
   int rooms_size;
 } server;
 
+// Create and initialize the server
 server init_server(int socket);
-void init_room(room* room);
+
+// Initialize the player
 void init_player(player* player, int socket, char* name);
+
+// Add the player to the lobby
+void add_player_to_lobby(player* player, lobby* lobby);
