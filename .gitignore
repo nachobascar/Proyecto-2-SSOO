@@ -57,3 +57,4 @@ server
 !server/
 
 obj/
+.vscode/

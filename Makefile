@@ -37,8 +37,10 @@ CFLAGS=-Wunused -Wall $(OPT)
 
 # Matemáticas (C Math library)
 MTH=-lm
+PTHREAD=-pthread
+NETINET=-lnsl
 
-LIB=$(MTH)
+LIB=$(MTH) $(PTHREAD) $(NETINET)
 
 ###############################################################################
 # MÓDULOS Y PROGRAMAS                                                         #
