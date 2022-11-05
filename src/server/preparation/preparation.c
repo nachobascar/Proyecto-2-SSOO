@@ -1,12 +1,5 @@
 #include "preparation.h"
 
-void close_board(char** board) {
-    for (int i = 0; i < 5; i++) {
-        free(board[i]);
-    }
-    free(board);
-}
-
 void create_player_board(player player) {
     char** grid = malloc(5 * sizeof(char*));
     for (int i = 0; i < 5; i++) {
@@ -18,4 +11,11 @@ void create_player_board(player player) {
     }
 
     player.board = grid;
+}
+
+void close_board(char** board) {
+    for (int i = 0; i < 5; i++) {
+        free(board[i]);
+    }
+    free(board);
 }
