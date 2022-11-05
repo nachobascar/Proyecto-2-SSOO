@@ -1,5 +1,12 @@
 #include "preparation.h"
 
+void close_grid(char** grid) {
+    for (int i = 0; i < 5; i++) {
+        free(grid[i]);
+    }
+    free(grid);
+}
+
 void test_function() {
     char** grid = malloc(5 * sizeof(char*));
     for (int i = 0; i < 5; i++) {
@@ -13,11 +20,4 @@ void test_function() {
     print_grid(grid);
 
     close_grid(grid);
-}
-
-void close_grid(char** grid) {
-    for (int i = 0; i < 5; i++) {
-        free(grid[i]);
-    }
-    free(grid);
 }
