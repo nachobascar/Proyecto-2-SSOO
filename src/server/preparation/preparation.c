@@ -129,7 +129,7 @@ const char* place_ship(char** board, char* start, char* end) {
     } else {
         return "El barco ingresado no esta en una posición horizontal o vertical.";
     }
-    
+
     return "";
 }
 
@@ -138,11 +138,11 @@ void start_preparation(char** board) {
 
     while (!confirmed_ships) {
         if (count_placed_ships(board) != 3) {
-            char* place_ship_menu = "";
+            char* place_ship_menu = "Ingresa las coordenadas de un barco: \n";
             printf("%s\n", place_ship_menu);
             char start[20];
             char end[20];
-            scanf("%s %s", start, end);
+            scanf("%s %s\n", start, end);
             const char* status = place_ship(board, start, end);
             printf("%s\n", status);
         } else {
