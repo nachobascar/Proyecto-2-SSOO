@@ -84,7 +84,7 @@ int check_ship_length(int ship_length, int placed_ships) {
 
 const char* place_ship(char** board, char* start, char* end) {
     if (!check_pos(start, end)) {
-        return "\nLas coordenadas no fueron ingresadas en el formato correcto.";
+        return "Las coordenadas no fueron ingresadas en el formato correcto.";
     }
 
     int start_pos[] = {(int) start[1] - '0' - 1, char_to_pos(start[0])};
@@ -95,39 +95,39 @@ const char* place_ship(char** board, char* start, char* end) {
         sort_range(range);
         int ship_length = range[1] - range[0] + 1;
         if (!check_ship_length(ship_length, count_placed_ships(board))) {
-            return "\nEl largo del barco ingresado es incorrecto.";
+            return "El largo del barco ingresado es incorrecto.";
         }
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                return "\nEl barco ingresado choca con otro barco.";
+                return "El barco ingresado choca con otro barco.";
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[start_pos[0]][i] = 'O';
         }
         print_grid(board);
-        return "\nEl barco ha sido ingresado correctamente.";
+        return "El barco ha sido ingresado correctamente.";
 
     } else if (start_pos[1] == end_pos[1]) {
         int range[] = {start_pos[0], end_pos[0]};
         sort_range(range);
         int ship_length = range[1] - range[0] + 1;
         if (!check_ship_length(ship_length, count_placed_ships(board))) {
-            return "\nEl largo del barco ingresado es incorrecto.";
+            return "El largo del barco ingresado es incorrecto.";
         }
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                return "\nEl barco ingresado choca con otro barco.";
+                return "El barco ingresado choca con otro barco.";
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[i][start_pos[1]] = 'O';
         }
         print_grid(board);
-        return "\nEl barco ha sido ingresado correctamente.";
+        return "El barco ha sido ingresado correctamente.";
 
     } else {
-        return "\nEl barco ingresado no esta en una posición horizontal o vertical.";
+        return "El barco ingresado no esta en una posición horizontal o vertical.";
     }
 
     return "";
@@ -144,7 +144,7 @@ void start_preparation(char** board) {
             char end[20];
             scanf("%s %s", start, end);
             const char* status = place_ship(board, start, end);
-            printf("%s\n", status);
+            printf("\n%s\n\n", status);
         } else {
             char* place_ship_menu = "";
             printf("%s\n", place_ship_menu);
