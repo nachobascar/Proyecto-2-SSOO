@@ -6,6 +6,7 @@ Ids
 
   - 0: Recibe el nombre del usuario, y lo agrega al loby
   - 1: Recibe el id de la sala a la que ingresar
+  - 2: Petición del cliente para obtener lista de salas actualizadas
 
 
 # Documentación Mensajes de Server a Cliente

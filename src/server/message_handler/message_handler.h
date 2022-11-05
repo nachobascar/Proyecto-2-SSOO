@@ -5,3 +5,4 @@
 
 void handle_id_0(player* player, server *server, int id, int data_length, char *data);
 void handle_id_1(player* player, server *server, int id, int data_length, char *data);
+void handle_id_2(player* player, server *server, int id, int data_length, char *data);

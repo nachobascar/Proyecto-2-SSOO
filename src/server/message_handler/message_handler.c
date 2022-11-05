@@ -67,23 +67,24 @@ void handle_id_1(player* player, server *server, int id, int data_length, char *
     printf("Player %s joined the room %d\n", player->name, room_id);
     // Send to the player the room id
     send_package(player->socket, 1, 4, data, server);
-
-    // Send updated room list to all players in the lobby
-    char data[255];
-    int data_length = 0;
-    for (int i = 0; i < server->rooms_size; i++) {
-      char room_id[4];
-      sprintf(room_id, "%d", i);
-      char n_players[4];
-      sprintf(n_players, "%d", server->rooms[i].n_players);
-      
-      strcpy(data + data_length, room_id);
-      data_length += 4;
-      strcpy(data + data_length, n_players);
-      data_length += 4;   
-    }
-    for (struct lobby_node* node = server->lobby.first; node != NULL; node = node->next) {
-      send_package(node->player->socket, 0, data_length, data, server);
-    }
   }
+}
+
+// Request for updated rooms list
+void handle_id_2(player* player, server *server, int id, int data_length, char *data) {
+  // Send to the player the list of rooms
+  char data[255];
+  int data_length = 0;
+  for (int i = 0; i < server->rooms_size; i++) {
+    char room_id[4];
+    sprintf(room_id, "%d", i);
+    char n_players[4];
+    sprintf(n_players, "%d", server->rooms[i].n_players);
+    
+    strcpy(data + data_length, room_id);
+    data_length += 4;
+    strcpy(data + data_length, n_players);
+    data_length += 4;   
+  }
+  send_package(player->socket, 0, data_length, data, server);
 }
