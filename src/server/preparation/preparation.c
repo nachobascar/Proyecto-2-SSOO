@@ -180,6 +180,7 @@ void start_preparation(char** board) {
                 continue;
             } else if (option[0] == '0') {
                 restart_board(board);
+                print_grid(board);
             } else if (option[0] == '1') {
                 confirmed_ships = 1;
             }
