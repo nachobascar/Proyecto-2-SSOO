@@ -138,9 +138,9 @@ void start_preparation(char** board) {
 
     char* place_ship_menu = "----- Menu de preparación -----\n\n"
         "Ingresa las coordenadas de inicio y fin del barco\n";
-        "\t - Pueden estar separadas por un espacio o por Enter\n";
-        "\t - Deben ser de la forma Letra Número (por ejemplo A1)\n";
-        "\t - La letra puede estar en mayúsculas o minúsculas\n";
+        "- Pueden estar separadas por un espacio o por Enter\n";
+        "- Deben ser de la forma Letra Número (por ejemplo A1)\n";
+        "- La letra puede estar en mayúsculas o minúsculas\n";
     printf("%s", place_ship_menu);
 
     while (!confirmed_ships) {
@@ -156,10 +156,10 @@ void start_preparation(char** board) {
                 print_grid(board);
             } else {
                 char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
-                "\t - Seguir el formato para ingresar coordenadas\n";
-                "\t - Los barcos solo pueden estar horizontal o verticalmente\n";
-                "\t - Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n";
-                "\t - Un barco no puede chocar con otro\n";
+                "- Seguir el formato para ingresar coordenadas\n";
+                "- Los barcos solo pueden estar horizontal o verticalmente\n";
+                "- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n";
+                "- Un barco no puede chocar con otro\n";
             printf("%s", error_msg);
             }
         } else {
