@@ -38,6 +38,7 @@ void handle_id_0(player* player, server *server, int id, int data_length, char *
     // Update player on room
     server->rooms[room_id].players[player_id] = player;
     printf("Player %s rejoined the game\n", player_name);
+    free(old_player);
   }
 }
 
