@@ -64,6 +64,18 @@ char char_to_pos(char character) {
     return pos;
 }
 
+int sort_numbers(int num_1, int num_2) {
+    int sorted_array[2];
+    if (num_1 <= num_2) {
+        sorted_array[0] = num_1;
+        sorted_array[1] = num_2;
+    } else {
+        sorted_array[0] = num_2;
+        sorted_array[1] = num_1;
+    }
+    return sorted_array;
+}
+
 void place_ship(char** board, char* start, char* end) {
     int start_pos[] = {(int) start[1] - '0' - 1, char_to_pos(start[0])};
     int end_pos[] = {(int) end[1] - '0' - 1, char_to_pos(end[0])};
@@ -72,7 +84,8 @@ void place_ship(char** board, char* start, char* end) {
     printf("End position: %d, %d\n", end_pos[0], end_pos[1]);
 
     if (start_pos[0] == end_pos[0]) {
-        for (int i = start_pos[1]; i <= end_pos[1]; i++) {
+        int* sorted_range = sort_numbers(start_pos[1], end_pos[1]);
+        for (int i = sorted_range[0]; i <= sorted_range[1]; i++) {
             board[start_pos[1]][i] = 'O';
         }
     } else if (start_pos[1] == end_pos[1]) {
