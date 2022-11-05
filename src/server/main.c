@@ -25,22 +25,18 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    printf("IP address: %s\n", ip_address);
-    printf("TCP port: %d\n\n", tcp_port);
-
+    // Craete player
     player player;
     player.board = create_board();
-    
-    // place_ship(player.board, "D4", "D5");
-    // place_ship(player.board, "B3", "B5");
-    // place_ship(player.board, "A1", "D1");
 
+    // Menu for placing ships
     start_preparation(player.board);
 
+    // Free board memory
     close_board(player.board);
 
-    // print_grid(player.board);
-    // close_board(player.board);
+    // printf("IP address: %s\n", ip_address);
+    // printf("TCP port: %d\n\n", tcp_port);
 
     // // Initialize the server
     // int socket_fd = create_socket(ip_address, tcp_port);

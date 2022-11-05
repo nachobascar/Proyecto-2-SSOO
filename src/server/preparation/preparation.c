@@ -1,5 +1,6 @@
 #include "preparation.h"
 
+// Create empty board
 char** create_board() {
     char** grid = malloc(5 * sizeof(char*));
     for (int i = 0; i < 5; i++) {
@@ -13,6 +14,7 @@ char** create_board() {
     return grid;
 }
 
+// Return the number of placed ships in a board
 int count_placed_ships(char** board) {
     int o_count = 0;
     int placed_ships = 0;
@@ -40,6 +42,7 @@ int count_placed_ships(char** board) {
     return placed_ships;
 }
 
+// Converts a character to row or column number
 char char_to_pos(char character) {
     int pos;
     if (character >= 'A' && character <= 'E') {
@@ -50,6 +53,7 @@ char char_to_pos(char character) {
     return pos;
 }
 
+// Sort array of length 2 ascending
 void sort_range(int* range) {
     int first = range[0];
     int last = range[1];
@@ -59,6 +63,7 @@ void sort_range(int* range) {
     }
 }
 
+// Check position format and range
 int check_pos(char* start, char* end) {
     if (strlen(start) != 2 || strlen(end) != 2) {
         return 0;
@@ -73,6 +78,7 @@ int check_pos(char* start, char* end) {
     return 1;
 }
 
+// Check the length of a placed ship
 int check_ship_length(int ship_length, int placed_ships) {
     if ((ship_length == 2 && placed_ships == 0)
         || (ship_length == 3 && placed_ships == 1)
@@ -82,6 +88,8 @@ int check_ship_length(int ship_length, int placed_ships) {
     return 0;
 }
 
+// Place a ship in the board given start and end position
+// Return 0 if placed correctly, if not return -1
 int place_ship(char** board, char* start, char* end) {
     if (!check_pos(start, end)) {
         return -1;
@@ -131,6 +139,7 @@ int place_ship(char** board, char* start, char* end) {
     return -1;
 }
 
+// Empty board positions
 void restart_board(char** board) {
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
@@ -140,10 +149,11 @@ void restart_board(char** board) {
     }
 }
 
+// Menu for placing ships
 void start_preparation(char** board) {
     int confirmed_ships = 0;
 
-    char* place_ship_menu = "----- Menu de preparación -----\n\n"
+    char* place_ship_menu = "----- MENÚ DE PREPARACIÓN -----\n\n"
         "Para ingresar las coordenadas considera lo siguiente\n"
         "\t- Pueden estar separadas por un espacio o por Enter\n"
         "\t- Deben ser de la forma Letra Número (por ejemplo A1)\n"
@@ -191,6 +201,7 @@ void start_preparation(char** board) {
     }
 }
 
+// Free board memory
 void close_board(char** board) {
     for (int i = 0; i < 5; i++) {
         free(board[i]);
