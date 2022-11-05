@@ -60,9 +60,6 @@ void sort_range(int* range) {
 }
 
 int check_pos(char* start, char* end) {
-    if (strlen(start) != 2 || strlen(end) != 2) {
-        return 0;
-    }
     if (!((start[0] >= 'A' && start[0] <= 'E') || (start[0] >= 'a' && start[0] <= 'e'))
         || !((end[0] >= 'A' && end[0] <= 'E') || (end[0] >= 'a' && end[0] <= 'e'))) {
         return 0;
@@ -131,6 +128,29 @@ void place_ship(char** board, char* start, char* end) {
         }
     } else {
         printf("F3\n");
+    }
+}
+
+void start_preparation(char** board) {
+    int confirmed_ships = 0;
+
+    while (!confirmed_ships) {
+        if (count_placed_ships(board) != 3) {
+            char* place_ship_menu = "";
+            printf("%s\n", place_ship_menu);
+            char* ship_pos;
+            scanf("%s", &ship_pos);
+            if (strlen(ship_pos) != 5) {
+                printf("Las coordenadas no fueron ingresadas en el formato correcto.\n");
+                continue;
+            }
+            char start[] = {ship_pos[0], ship_pos[1]};
+            char end[] = {ship_pos[3], ship_pos[4]};
+            printf("start: %s, end: %s\n", start, end);
+        } else {
+            char* place_ship_menu = "";
+            printf("%s\n", place_ship_menu);
+        }
     }
 }
 
