@@ -82,7 +82,7 @@ int check_ship_length(int ship_length, int placed_ships) {
     return 0;
 }
 
-char* place_ship(char** board, char* start, char* end) {
+const char* place_ship(char** board, char* start, char* end) {
     if (!check_pos(start, end)) {
         return "Las coordenadas no fueron ingresadas en el formato correcto.";
     }
