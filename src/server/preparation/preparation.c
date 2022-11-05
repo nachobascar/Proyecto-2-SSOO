@@ -131,6 +131,7 @@ const char* place_ship(char** board, char* start, char* end) {
     } else {
         return "El barco ingresado no esta en una posición horizontal o vertical.";
     }
+    return "";
 }
 
 void start_preparation(char** board) {
