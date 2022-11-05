@@ -87,7 +87,7 @@ int check_pos(int* start, int* end, int ship_length, int placed_ships) {
         condition_2 = 1;
     }
 
-    printf("Condition 1: %d, Condition 2: %d", condition_1, condition_2);
+    printf("Condition 1: %d, Condition 2: %d\n", condition_1, condition_2);
 
     if (condition_1 && condition_2) {
         return 1;
