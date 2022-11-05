@@ -112,7 +112,7 @@ void place_ship(char** board, char* start, char* end) {
             }
         }
         int ship_length = range[1] - range[0] + 1;
-        if (!check_pos(start, end, ship_length, count_placed_ships(board))) {
+        if (!check_pos(start_pos, end_pos, ship_length, count_placed_ships(board))) {
             printf("F2\n");
             return;
         }
@@ -130,7 +130,7 @@ void place_ship(char** board, char* start, char* end) {
             }
         }
         int ship_length = range[1] - range[0] + 1;
-        if (!check_pos(start, end, ship_length, count_placed_ships(board))) {
+        if (!check_pos(start_pos, end_pos, ship_length, count_placed_ships(board))) {
             printf("F2\n");
             return;
         }
