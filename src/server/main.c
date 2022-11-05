@@ -27,7 +27,11 @@ int main(int argc, char *argv[]) {
     printf("IP address: %s\n", ip_address);
     printf("TCP port: %d\n\n", tcp_port);
 
-    test_function();
+    player player;
+    create_player_board(player);
+
+    print_grid(player.board);
+    close_board(player.board);
 
     // // Initialize the server
     // int socket_fd = create_socket(ip_address, tcp_port);

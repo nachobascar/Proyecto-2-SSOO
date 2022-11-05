@@ -4,5 +4,6 @@
 #include <stdlib.h>
 
 #include "../../client/helpers/helpers.h"
+#include "../server_structures/server_structures.h"
 
-void test_function();
+void create_player_board();

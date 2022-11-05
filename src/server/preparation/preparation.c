@@ -1,10 +1,10 @@
 #include "preparation.h"
 
-void close_grid(char** grid) {
+void close_board(char** board) {
     for (int i = 0; i < 5; i++) {
-        free(grid[i]);
+        free(board[i]);
     }
-    free(grid);
+    free(board);
 }
 
 void test_function() {
@@ -20,4 +20,17 @@ void test_function() {
     print_grid(grid);
 
     close_grid(grid);
+}
+
+void create_player_board(player player) {
+    char** grid = malloc(5 * sizeof(char*));
+    for (int i = 0; i < 5; i++) {
+        grid[i] = malloc(5 * sizeof(char));
+        for (int j = 0; j < 5; j++) {
+            char c = 'O';
+            grid[i][j] = c;
+        }
+    }
+
+    player.board = grid;
 }

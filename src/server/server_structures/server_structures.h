@@ -8,6 +8,7 @@ typedef struct player {
   int socket;
   char* name;
   int status;
+  char** board;
 } player;
 
 typedef struct room {
