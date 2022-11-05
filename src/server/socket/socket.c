@@ -8,6 +8,14 @@ int create_socket(char *ip_address, int port) {
     exit(EXIT_FAILURE);
   }
 
+  // Set the socket options
+  int opt = 1;
+  int ret = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+  if (ret < 0) {
+    perror("Error setting socket options");
+    exit(EXIT_FAILURE);
+  }
+
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
   server_address.sin_port = htons(port);
@@ -97,5 +105,21 @@ int accept_connections(int socket_fd, server server) {
     // Start thread for client
     pthread_t thread;
     pthread_create(&thread, NULL, handle_client, (void *) &args);
+  }
+}
+
+// Send a package to the client
+void send_package(int client_socket_fd, int id, int data_length, char *data) {
+  char buffer[257];
+  buffer[0] = id;
+  buffer[1] = data_length;
+  for (int i = 0; i < data_length; i++) {
+    buffer[i + 2] = data[i];
+  }
+
+  int write_status = write(client_socket_fd, buffer, data_length + 2);
+  if (write_status < 0) {
+    perror("Error writing to socket");
+    exit(EXIT_FAILURE);
   }
 }
