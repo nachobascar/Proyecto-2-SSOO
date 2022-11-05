@@ -5,10 +5,12 @@ char** create_board() {
     for (int i = 0; i < 5; i++) {
         grid[i] = malloc(5 * sizeof(char));
         for (int j = 0; j < 5; j++) {
-            char c = 'O';
+            char c = ' ';
             grid[i][j] = c;
         }
     }
+    grid[3][3] = 'O';
+    grid[3][4] = 'O';
 
     return grid;
 }
@@ -42,7 +44,7 @@ int count_placed_ships(char** board) {
 
 void place_ship(char** board, char* start, char* end) {
     int placed_ships = count_placed_ships(board);
-    printf("%d\n", placed_ships);
+    printf("Placed ships: %d\n", placed_ships);
 }
 
 void close_board(char** board) {
