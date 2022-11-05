@@ -143,7 +143,7 @@ void start_preparation(char** board) {
             char start[20];
             char end[20];
             scanf("%s %s", start, end);
-            char* status = place_ship(board, start, end);
+            const char* status = place_ship(board, start, end);
             printf("%s\n", status);
         } else {
             char* place_ship_menu = "";
