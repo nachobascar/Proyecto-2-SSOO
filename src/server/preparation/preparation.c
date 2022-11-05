@@ -104,9 +104,9 @@ const char* place_ship(char** board, char* start, char* end) {
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[start_pos[0]][i] = 'O';
-            print_grid(board);
-            return "El barco ha sido ingresado correctamente.";
         }
+        print_grid(board);
+        return "El barco ha sido ingresado correctamente.";
 
     } else if (start_pos[1] == end_pos[1]) {
         int range[] = {start_pos[0], end_pos[0]};
@@ -122,12 +122,14 @@ const char* place_ship(char** board, char* start, char* end) {
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[i][start_pos[1]] = 'O';
-            print_grid(board);
-            return "El barco ha sido ingresado correctamente.";
         }
+        print_grid(board);
+        return "El barco ha sido ingresado correctamente.";
+
     } else {
         return "El barco ingresado no esta en una posición horizontal o vertical.";
     }
+    
     return "";
 }
 
