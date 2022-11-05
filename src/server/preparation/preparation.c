@@ -14,3 +14,10 @@ void test_function() {
 
     free(grid);
 }
+
+void free_grid(char** grid) {
+    free(grid);
+    for (int i = 0; i < 5; i++) {
+        free(grid[i]);
+    }
+}
