@@ -12,10 +12,10 @@ void test_function() {
 
     print_grid(grid);
 
-    free(grid);
+    close_grid(grid);
 }
 
-void free_grid(char** grid) {
+void close_grid(char** grid) {
     free(grid);
     for (int i = 0; i < 5; i++) {
         free(grid[i]);
