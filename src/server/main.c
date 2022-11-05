@@ -30,7 +30,9 @@ int main(int argc, char *argv[]) {
 
     player player;
     player.board = create_board();
-    printf("%d\n", player.board);
+    
+    print_grid(player.board);
+    close_board(player.board);
 
     // print_grid(player.board);
     // close_board(player.board);
