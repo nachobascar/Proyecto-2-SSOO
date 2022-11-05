@@ -9,17 +9,6 @@ char** create_board() {
             grid[i][j] = c;
         }
     }
-    grid[3][3] = 'O';
-    grid[4][3] = 'O';
-
-    grid[2][1] = 'O';
-    grid[3][1] = 'O';
-    grid[4][1] = 'O';
-
-    grid[0][0] = 'O';
-    grid[0][1] = 'O';
-    grid[0][2] = 'O';
-    grid[0][3] = 'O';
 
     return grid;
 }
@@ -79,14 +68,17 @@ void place_ship(char** board, char* start, char* end) {
     int placed_ships = count_placed_ships(board);
     printf("Placed ships: %d\n", placed_ships);
 
-    int start_pos[] = {char_to_pos(start[0]), (int) start[1] - '0' - 1};
-    int end_pos[] = {char_to_pos(end[0]), (int) end[1] - '0' - 1};
+    int start_pos[] = {(int) start[1] - '0' - 1, char_to_pos(start[0])};
+    int end_pos[] = {(int) end[1] - '0' - 1, char_to_pos(end[0])};
 
-    // if (char_to_pos(start[0]) == end[1] - '0') {
-
-    // }
     printf("Start position: %d, %d\n", start_pos[0], start_pos[1]);
     printf("End position: %d, %d\n", end_pos[0], end_pos[1]);
+
+    if (start_pos[1] == end_pos[1]) {
+        for (int i = start_pos[0]; i <= end_pos[0]; i++) {
+            board[i][start_pos[1]] = 'O';
+        }
+    }
 }
 
 void close_board(char** board) {
