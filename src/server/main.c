@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
     printf("TCP port: %d\n\n", tcp_port);
 
     player player;
-    player.status = 0;
-    printf("%d\n", player.status);
+    player.board = create_board();
+    printf("%d\n", player.board);
 
     // print_grid(player.board);
     // close_board(player.board);
