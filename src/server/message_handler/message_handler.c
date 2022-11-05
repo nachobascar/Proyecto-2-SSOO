@@ -51,6 +51,16 @@ void handle_id_1(player* player, server *server, int id, int data_length, char *
   } else {
     // If the room is not full, add the player to the room
     room->players[room->n_players++] = player;
+    strcpy(player->status, "waiting");
+
+    if (room->n_players == 2) {
+      // If the room is full, start the game
+      for (int i = 0; i < 2; i++) {
+        strcpy(room->players[i]->status, "playing");
+      }
+      // TODO: start_game(room);
+    }
+
     // Remove the player from the lobby
     remove_player_from_lobby(player, &server->lobby);
     printf("Player %s joined the room %d\n", player->name, room_id);
