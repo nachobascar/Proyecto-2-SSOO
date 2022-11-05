@@ -64,7 +64,7 @@ char char_to_pos(char character) {
     return pos;
 }
 
-int sort_numbers(int num_1, int num_2) {
+int* sort_numbers(int num_1, int num_2) {
     int sorted_array[2];
     if (num_1 <= num_2) {
         sorted_array[0] = num_1;
