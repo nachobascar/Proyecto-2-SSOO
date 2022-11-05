@@ -11,4 +11,6 @@ void test_function() {
     }
 
     print_grid(grid);
+
+    free(grid);
 }
