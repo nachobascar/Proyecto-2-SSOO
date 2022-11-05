@@ -31,7 +31,7 @@ int create_socket(char *ip_address, int port) {
 }
 
 // Handle the message sent from client
-void handle_package(int client_socket_fd, char buffer[257], server server) {
+void handle_package(int client_socket_fd, char buffer[257], server *server) {
   switch (buffer[0])
   {
   case 0: ;
@@ -43,9 +43,20 @@ void handle_package(int client_socket_fd, char buffer[257], server server) {
     }
     player_name[i] = '\0';
 
-    // Create player and add to the lobby
-    // init_player(client_socket_fd, player_name, server);
-    printf("Player %s joined the lobby\n", player_name);
+    // Find if player is on active room
+    player *player = find_disconnected_player_on_room(player_name, server);
+    if (player == NULL) {
+      // If not, create a new player
+      player = init_player(client_socket_fd, player_name);
+      // Add the player to the lobby
+      add_player_to_lobby(player, &server->lobby);
+      printf("Player %s joined the lobby\n", player_name);
+    } else {
+      // If the player is on active room, update the socket fd
+      player->socket = client_socket_fd;
+      strcpy(player->status, "playing");
+      printf("Player %s rejoined the game\n", player_name);
+    }
 
     break;
   
@@ -57,14 +68,33 @@ void handle_package(int client_socket_fd, char buffer[257], server server) {
 // Data structure to pass multiple arguments to the thread
 struct connection_init_args {
   int client_socket_fd;
-  server server;
+  server *server;
 };
+
+// Handle the logic of a client disconnection
+void handle_client_disconnection(int client_socket_fd, server *server) {
+  // Find the player on the lobby
+  player *player = find_player_on_lobby_by_socket(client_socket_fd, &(server->lobby));
+  if (player != NULL) {
+    // If the player is on the lobby, remove it
+    remove_player_from_lobby(player, &server->lobby);
+    printf("Player %s left the lobby\n", player->name);
+    free(player);
+  } else {
+    // If the player is on active room, remove it
+    player = find_player_on_room_by_socket(client_socket_fd, server);
+    if (player != NULL) {
+      strcpy(player->status, "disconnected");
+      printf("Player %s got disconnected\n", player->name);
+    }
+  }
+}
 
 
 // Handle the connection with the client
 void *handle_client(void *args) {
   int client_socket_fd = ((struct connection_init_args*) args)->client_socket_fd;
-  server server = ((struct connection_init_args*) args)->server;
+  server *server = ((struct connection_init_args*) args)->server;
 
   char buffer[257];
   while (1) {
@@ -72,12 +102,14 @@ void *handle_client(void *args) {
     int read_status = read(client_socket_fd, buffer, 2);
     if (read_status < 0) {
       perror("Error reading from socket");
+      handle_client_disconnection(client_socket_fd, server);
       exit(EXIT_FAILURE);
     }
 
     read_status = read(client_socket_fd, &(buffer[2]), buffer[1]);
     if (read_status < 0) {
       perror("Error reading package from socket");
+      handle_client_disconnection(client_socket_fd, server);
       exit(EXIT_FAILURE);
     }
 
@@ -86,7 +118,7 @@ void *handle_client(void *args) {
 }
 
 // Start listening for connections
-int accept_connections(int socket_fd, server server) {
+int accept_connections(int socket_fd, server *server) {
   while (1) {
     struct sockaddr_in client_address;
     socklen_t client_address_length = sizeof(client_address);
@@ -109,7 +141,7 @@ int accept_connections(int socket_fd, server server) {
 }
 
 // Send a package to the client
-void send_package(int client_socket_fd, int id, int data_length, char *data) {
+void send_package(int client_socket_fd, int id, int data_length, char *data, server *server) {
   char buffer[257];
   buffer[0] = id;
   buffer[1] = data_length;
@@ -120,6 +152,7 @@ void send_package(int client_socket_fd, int id, int data_length, char *data) {
   int write_status = write(client_socket_fd, buffer, data_length + 2);
   if (write_status < 0) {
     perror("Error writing to socket");
+    handle_client_disconnection(client_socket_fd, server);
     exit(EXIT_FAILURE);
   }
 }

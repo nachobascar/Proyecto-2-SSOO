@@ -7,11 +7,11 @@
 typedef struct player {
   int socket;
   char* name;
-  int status;
+  char status[50];
 } player;
 
 typedef struct room {
-  player players[2];
+  player *players[2];
   int n_players;
   int status;
 } room;
@@ -19,6 +19,7 @@ typedef struct room {
 struct lobby_node {
   player* player;
   struct lobby_node* next;
+  struct lobby_node* prev;
 };
 typedef struct lobby {
   struct lobby_node* first;
@@ -38,8 +39,42 @@ typedef struct server {
 // Create and initialize the server
 server init_server(int socket);
 
+//############################################################################################################
+/*
+  Player functions
+*/
+
 // Initialize the player
-void init_player(player* player, int socket, char* name);
+player *init_player(int socket, char* name);
+
+// Check if name is disponible
+int is_name_disponible(char* name, server* server);
+
+//############################################################################################################
+/*
+  Lobby functions
+*/
 
 // Add the player to the lobby
 void add_player_to_lobby(player* player, lobby* lobby);
+
+// Remove the player from the lobby
+void remove_player_from_lobby(player* player, lobby* lobby);
+
+// Pop the first player from the lobby
+player* pop_player_from_lobby(lobby* lobby);
+
+// Find player on the lobby
+player* find_player_on_lobby_by_socket(int socket, lobby* lobby);
+
+//############################################################################################################
+/*
+  Rooms functions
+*/
+
+// Find a disconnected player inside room with name
+player* find_disconnected_player_on_room(char* name, server* server);
+
+// Find a player inside room with socket
+player* find_player_on_room_by_socket(int client_socket_fd, server* server);
+

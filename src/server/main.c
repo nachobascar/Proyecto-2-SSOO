@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
 
     // Listen for connections
-    accept_connections(socket_fd, server);
+    accept_connections(socket_fd, &server);
 
     // Close the socket
     close(socket_fd);
