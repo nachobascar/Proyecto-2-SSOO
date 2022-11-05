@@ -82,9 +82,9 @@ int check_ship_length(int ship_length, int placed_ships) {
     return 0;
 }
 
-const char* place_ship(char** board, char* start, char* end) {
+int place_ship(char** board, char* start, char* end) {
     if (!check_pos(start, end)) {
-        return "Las coordenadas no fueron ingresadas en el formato correcto.";
+        return -1;
     }
 
     int start_pos[] = {(int) start[1] - '0' - 1, char_to_pos(start[0])};
@@ -95,56 +95,73 @@ const char* place_ship(char** board, char* start, char* end) {
         sort_range(range);
         int ship_length = range[1] - range[0] + 1;
         if (!check_ship_length(ship_length, count_placed_ships(board))) {
-            return "El largo del barco ingresado es incorrecto.";
+            return -1;
         }
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                return "El barco ingresado choca con otro barco.";
+                return -1;
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[start_pos[0]][i] = 'O';
         }
         print_grid(board);
-        return "El barco ha sido ingresado correctamente.";
+        return 0;
 
     } else if (start_pos[1] == end_pos[1]) {
         int range[] = {start_pos[0], end_pos[0]};
         sort_range(range);
         int ship_length = range[1] - range[0] + 1;
         if (!check_ship_length(ship_length, count_placed_ships(board))) {
-            return "El largo del barco ingresado es incorrecto.";
+            return -1;
         }
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                return "El barco ingresado choca con otro barco.";
+                return -1;
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[i][start_pos[1]] = 'O';
         }
         print_grid(board);
-        return "El barco ha sido ingresado correctamente.";
+        return 0;
 
     } else {
-        return "El barco ingresado no esta en una posición horizontal o vertical.";
+        return -1;
     }
 
-    return "";
+    return -1;
 }
 
 void start_preparation(char** board) {
     int confirmed_ships = 0;
 
+    char* place_ship_menu = "----- Menu de preparación -----\n\n"
+        "Ingresa las coordenadas de inicio y fin del barco\n";
+        "\t- Pueden estar separadas por un espacio o por Enter\n";
+        "\t- Deben ser de la forma Letra Número (por ejemplo A1)\n";
+        "\t- La letra puede estar en mayúsculas o minúsculas\n";
+    printf("%s", place_ship_menu);
+
     while (!confirmed_ships) {
         if (count_placed_ships(board) != 3) {
-            char* place_ship_menu = "Ingresa las coordenadas de un barco:";
-            printf("%s\n", place_ship_menu);
+            char* prompt = "Ingresa las coordenadas de inicio y fin del barco\n";
+            printf("%s", prompt);
             char start[20];
             char end[20];
             scanf("%s %s", start, end);
-            const char* status = place_ship(board, start, end);
-            printf("\n%s\n\n", status);
+            int status = place_ship(board, start, end);
+            printf("\n");
+            if (status == 0) {
+                print_grid(board);
+            } else {
+                char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
+                "\t- Seguir el formato para ingresar coordenadas\n";
+                "\t- Los barcos solo pueden estar horizontal o verticalmente\n";
+                "\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n";
+                "\t- Un barco no puede chocar con otro\n";
+            printf("%s", error_msg);
+            }
         } else {
             char* place_ship_menu = "";
             printf("%s\n", place_ship_menu);
