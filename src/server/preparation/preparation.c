@@ -65,9 +65,6 @@ char char_to_pos(char character) {
 }
 
 void place_ship(char** board, char* start, char* end) {
-    int placed_ships = count_placed_ships(board);
-    printf("Placed ships: %d\n", placed_ships);
-
     int start_pos[] = {(int) start[1] - '0' - 1, char_to_pos(start[0])};
     int end_pos[] = {(int) end[1] - '0' - 1, char_to_pos(end[0])};
 
@@ -76,8 +73,7 @@ void place_ship(char** board, char* start, char* end) {
 
     if (start_pos[0] == end_pos[0]) {
         for (int i = start_pos[1]; i <= end_pos[1]; i++) {
-            board[i][start_pos[1]] = 'O';
-            printf("Placing O in %d, %d\n", i, start_pos[1]);
+            board[start_pos[1]][i] = 'O';
         }
     }
 }
