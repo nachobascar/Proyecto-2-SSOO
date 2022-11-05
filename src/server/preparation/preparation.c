@@ -76,7 +76,7 @@ void place_ship(char** board, char* start, char* end) {
 
     if (start_pos[0] == end_pos[0]) {
         for (int i = start_pos[1]; i <= end_pos[1]; i++) {
-            board[0][start_pos[1]] = 'O';
+            board[i][start_pos[1]] = 'O';
             printf("Placing O in %d, %d\n", i, start_pos[1]);
         }
     }
