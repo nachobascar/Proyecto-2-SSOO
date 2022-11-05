@@ -77,7 +77,7 @@ void place_ship(char** board, char* start, char* end) {
         }
     } else if (start_pos[1] == end_pos[1]) {
         for (int i = start_pos[0]; i <= end_pos[0]; i++) {
-            board[i][start_pos[0]] = 'O';
+            board[i][start_pos[1]] = 'O';
         }
     }
 }
