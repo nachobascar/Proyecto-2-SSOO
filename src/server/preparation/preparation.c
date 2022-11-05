@@ -137,7 +137,7 @@ void start_preparation(char** board) {
     int confirmed_ships = 0;
 
     char* place_ship_menu = "----- Menu de preparación -----\n\n"
-        "Ingresa las coordenadas de inicio y fin del barco\n"
+        "Para ingresar las coordenadas considera lo siguiente\n"
         "\t- Pueden estar separadas por un espacio o por Enter\n"
         "\t- Deben ser de la forma Letra Número (por ejemplo A1)\n"
         "\t- La letra puede estar en mayúsculas o minúsculas\n";
@@ -145,7 +145,7 @@ void start_preparation(char** board) {
 
     while (!confirmed_ships) {
         if (count_placed_ships(board) != 3) {
-            char* prompt = "Ingresa las coordenadas de inicio y fin del barco\n";
+            char* prompt = "\nIngresa las coordenadas de inicio y fin del barco\n";
             printf("%s", prompt);
             char start[20];
             char end[20];
