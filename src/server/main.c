@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     
     place_ship(player.board, "D4", "D5");
     place_ship(player.board, "B3", "B5");
-    place_ship(player.board, "A1", "D1");
+    place_ship(player.board, "A3", "D3");
 
     print_grid(player.board);
 
