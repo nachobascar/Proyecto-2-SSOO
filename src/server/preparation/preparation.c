@@ -61,7 +61,6 @@ void sort_range(int* range) {
 
 int check_pos(char* start, char* end) {
     if (strlen(start) != 2 || strlen(end) != 2) {
-        printf("Las coordenadas no fueorn ingresadas en el formato correcto\n");
         return 0;
     }
     if (!((start[0] >= 'A' && start[0] <= 'E') || (start[0] >= 'a' && start[0] <= 'e'))
@@ -83,10 +82,9 @@ int check_ship_length(int ship_length, int placed_ships) {
     return 0;
 }
 
-void place_ship(char** board, char* start, char* end) {
+char* place_ship(char** board, char* start, char* end) {
     if (!check_pos(start, end)) {
-        printf("F0\n");
-        return;
+        return "Las coordenadas no fueron ingresadas en el formato correcto.";
     }
 
     int start_pos[] = {(int) start[1] - '0' - 1, char_to_pos(start[0])};
@@ -100,17 +98,17 @@ void place_ship(char** board, char* start, char* end) {
         sort_range(range);
         int ship_length = range[1] - range[0] + 1;
         if (!check_ship_length(ship_length, count_placed_ships(board))) {
-            printf("F1\n");
-            return;
+            return "El largo del barco ingresado es incorrecto.";
         }
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                printf("F2\n");
-                return;
+                return "El barco ingresado choca con otro barco.";
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[start_pos[0]][i] = 'O';
+            return "El barco ha sido ingresado correctamente.";
+            print_grid(board);
         }
 
     } else if (start_pos[1] == end_pos[1]) {
@@ -118,20 +116,20 @@ void place_ship(char** board, char* start, char* end) {
         sort_range(range);
         int ship_length = range[1] - range[0] + 1;
         if (!check_ship_length(ship_length, count_placed_ships(board))) {
-            printf("F1\n");
-            return;
+            return "El largo del barco ingresado es incorrecto.";
         }
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                printf("F2\n");
-                return;
+                return "El barco ingresado choca con otro barco.";
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[i][start_pos[1]] = 'O';
+            return "El barco ha sido ingresado correctamente.";
+            print_grid(board);
         }
     } else {
-        printf("F3\n");
+        return "El barco ingresado no esta en una posición horizontal o vertical.";
     }
 }
 
@@ -145,7 +143,8 @@ void start_preparation(char** board) {
             char start[20];
             char end[20];
             scanf("%s %s", start, end);
-            place_ship(board, start, end);
+            char* status = place_ship(board, start, end);
+            printf("%s\n", status);
         } else {
             char* place_ship_menu = "";
             printf("%s\n", place_ship_menu);

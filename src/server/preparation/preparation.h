@@ -9,8 +9,6 @@
 
 char** create_board();
 
-void place_ship(char** board, char* start, char* end);
-
 void start_preparation(char** board);
 
 void close_board(char** board);
