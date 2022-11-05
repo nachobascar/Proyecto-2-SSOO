@@ -73,7 +73,7 @@ player* find_player_on_lobby_by_socket(int socket, lobby* lobby);
 */
 
 // Find a disconnected player inside room with name
-player* find_disconnected_player_on_room(char* name, server* server);
+player* find_disconnected_player_on_room(char* name, int* room_id, int* player_id, server* server);
 
 // Find a player inside room with socket
 player* find_player_on_room_by_socket(int client_socket_fd, server* server);

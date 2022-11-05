@@ -103,15 +103,19 @@ player* find_player_on_lobby_by_socket(int socket, lobby* lobby) {
 }
 
 // Find a disconnected player inside room with name
-player* find_disconnected_player_on_room(char* name, server* server) {
+player* find_disconnected_player_on_room(char* name, int* room_id, int* player_id, server* server) {
   for (int i = 0; i < server->rooms_size; i++) {
     room* room = &server->rooms[i];
     if (room->n_players == 2) {
-      if (strcmp(room->players[0]->name, name) == 0 && strcmp(room->players[0]->status, "disconnected") == 0) { 
-        return &(room->players[0]);
+      if (strcmp(room->players[0]->name, name) == 0 && strcmp(room->players[0]->status, "disconnected") == 0) {
+        *room_id = i;
+        *player_id = 0;
+        return room->players[0];
       }
       if (strcmp(room->players[1]->name, name) == 0 && strcmp(room->players[0]->status, "disconnected") == 0) {
-        return &(room->players[1]);
+        *room_id = i;
+        *player_id = 1;
+        return room->players[1];
       }
     }
   }
@@ -124,10 +128,10 @@ player* find_player_on_room_by_socket(int client_socket_fd, server* server) {
     room* room = &server->rooms[i];
     if (room->n_players == 2) {
       if (room->players[0]->socket == client_socket_fd) { 
-        return &(room->players[0]);
+        return room->players[0];
       }
       if (room->players[1]->socket == client_socket_fd) {
-        return &(room->players[1]);
+        return room->players[1];
       }
     }
   }

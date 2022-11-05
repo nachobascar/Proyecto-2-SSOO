@@ -11,6 +11,7 @@
 #include <pthread.h>
 
 #include "../server_structures/server_structures.h"
+#include "../message_handler/message_handler.h"
 
 // Create the socket and open the connection of the server
 int create_socket(char *ip_address, int port);

@@ -31,35 +31,25 @@ int create_socket(char *ip_address, int port) {
 }
 
 // Handle the message sent from client
-void handle_package(int client_socket_fd, char buffer[257], server *server) {
-  switch (buffer[0])
+void handle_package(player* player, char buffer[257], server *server) {
+  int id = buffer[0];
+  int data_length = atoi(buffer + 1);
+  char data[256];
+  memcpy(data, &buffer[2], data_length);
+  data[data_length] = '\0';
+
+  switch (id)
   {
   case 0: ;
     // Init player. The package is the player name
-    char player_name[256];
-    int i;
-    for (i = 0; i < 255; i++) {
-      player_name[i] = buffer[i + 2];
-    }
-    player_name[i] = '\0';
-
-    // Find if player is on active room
-    player *player = find_disconnected_player_on_room(player_name, server);
-    if (player == NULL) {
-      // If not, create a new player
-      player = init_player(client_socket_fd, player_name);
-      // Add the player to the lobby
-      add_player_to_lobby(player, &server->lobby);
-      printf("Player %s joined the lobby\n", player_name);
-    } else {
-      // If the player is on active room, update the socket fd
-      player->socket = client_socket_fd;
-      strcpy(player->status, "playing");
-      printf("Player %s rejoined the game\n", player_name);
-    }
-
+    handle_id_0(player, server, id, data_length, data);
     break;
   
+  case 1: ;
+    // Enter user in the room
+    handle_id_1(player, server, id, data_length, data);
+    break;
+
   default:
     break;
   }
@@ -96,6 +86,8 @@ void *handle_client(void *args) {
   int client_socket_fd = ((struct connection_init_args*) args)->client_socket_fd;
   server *server = ((struct connection_init_args*) args)->server;
 
+  player* player = init_player(client_socket_fd, "");
+
   char buffer[257];
   while (1) {
     bzero(buffer, 257);
@@ -113,7 +105,7 @@ void *handle_client(void *args) {
       exit(EXIT_FAILURE);
     }
 
-    handle_package(client_socket_fd, buffer, server);
+    handle_package(player, buffer, server);
   }
 }
 
