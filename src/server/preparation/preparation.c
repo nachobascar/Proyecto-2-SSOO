@@ -73,7 +73,7 @@ void sort_range(int* range) {
     }
 }
 
-int check_pos(char* start, char* end, int ship_length, int placed_ships) {
+int check_pos(int* start, int* end, int ship_length, int placed_ships) {
     int condition_1 = 0;
     int condition_2 = 0;
 
