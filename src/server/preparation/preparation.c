@@ -142,6 +142,7 @@ void start_preparation(char** board) {
             char end[2];
             scanf("%s %s", start, end);
             printf("start: %s, end: %s\n", start, end);
+            break;
         } else {
             char* place_ship_menu = "";
             printf("%s\n", place_ship_menu);
