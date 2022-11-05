@@ -86,7 +86,7 @@ int check_pos(char* start, char* end, int ship_length, int placed_ships) {
         || (ship_length == 4 && placed_ships == 2)) {
         condition_2 = 1;
     }
-    
+
     if (condition_1 && condition_2) {
         return 1;
     }
@@ -105,13 +105,13 @@ void place_ship(char** board, char* start, char* end) {
         sort_range(range);
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                printf("F\n");
+                printf("F1\n");
                 return;
             }
         }
         int ship_length = range[1] - range[0] + 1;
         if (!check_pos(start, end, ship_length, count_placed_ships(board))) {
-            printf("F\n");
+            printf("F2\n");
             return;
         }
         for (int i = range[0]; i <= range[1]; i++) {
@@ -123,20 +123,20 @@ void place_ship(char** board, char* start, char* end) {
         sort_range(range);
         for (int i = range[0]; i <= range[1]; i++) {
             if (board[start_pos[0]][i] == 'O') {
-                printf("F\n");
+                printf("F1\n");
                 return;
             }
         }
         int ship_length = range[1] - range[0] + 1;
         if (!check_pos(start, end, ship_length, count_placed_ships(board))) {
-            printf("F\n");
+            printf("F2\n");
             return;
         }
         for (int i = range[0]; i <= range[1]; i++) {
             board[i][start_pos[1]] = 'O';
         }
     } else {
-        printf("F\n");
+        printf("F3\n");
     }
 }
 
