@@ -175,7 +175,6 @@ void start_preparation(char** board) {
             printf("%s", error_msg);
             }
         } else {
-            printf("%s", prompt_2);
             char option;
             scanf("%c", &option);
             if (option == '0') {
