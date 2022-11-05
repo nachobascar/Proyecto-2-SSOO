@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "socket/socket.h"
+#include "preparation/preparation.h"
 
 int main(int argc, char *argv[]) {
     printf("Hello, World! Im the server\n\n");
@@ -25,6 +26,8 @@ int main(int argc, char *argv[]) {
 
     printf("IP address: %s\n", ip_address);
     printf("TCP port: %d\n\n", tcp_port);
+
+    test_function();
 
     // Initialize the server
     int socket_fd = create_socket(ip_address, tcp_port);
