@@ -1,10 +1,10 @@
 #include "preparation.h"
 
 void close_grid(char** grid) {
-    free(grid);
     for (int i = 0; i < 5; i++) {
         free(grid[i]);
     }
+    free(grid);
 }
 
 void test_function() {
