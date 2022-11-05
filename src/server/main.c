@@ -31,8 +31,8 @@ int main(int argc, char *argv[]) {
     player player;
     player.board = create_board();
     
-    print_grid(player.board);
     place_ship(player.board, "A1", "D1");
+    print_grid(player.board);
 
     close_board(player.board);
 
