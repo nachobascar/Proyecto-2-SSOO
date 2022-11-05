@@ -25,6 +25,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    printf("IP address: %s\n", ip_address);
+    printf("TCP port: %d\n\n", tcp_port);
+
     // Craete player
     player player;
     player.board = create_board();
@@ -34,9 +37,6 @@ int main(int argc, char *argv[]) {
 
     // Free board memory
     close_board(player.board);
-
-    // printf("IP address: %s\n", ip_address);
-    // printf("TCP port: %d\n\n", tcp_port);
 
     // // Initialize the server
     // int socket_fd = create_socket(ip_address, tcp_port);
