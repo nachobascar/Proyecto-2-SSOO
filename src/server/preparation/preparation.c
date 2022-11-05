@@ -60,6 +60,10 @@ void sort_range(int* range) {
 }
 
 int check_pos(char* start, char* end) {
+    if (strlen(start) != 2 || strlen(end) != 2) {
+        printf("Las coordenadas no fueorn ingresadas en el formato correcto\n");
+        return 0;
+    }
     if (!((start[0] >= 'A' && start[0] <= 'E') || (start[0] >= 'a' && start[0] <= 'e'))
         || !((end[0] >= 'A' && end[0] <= 'E') || (end[0] >= 'a' && end[0] <= 'e'))) {
         return 0;
@@ -138,14 +142,14 @@ void start_preparation(char** board) {
         if (count_placed_ships(board) != 3) {
             char* place_ship_menu = "";
             printf("%s\n", place_ship_menu);
-            char start[2];
-            char end[2];
+            char start[20];
+            char end[20];
             scanf("%s %s", start, end);
-            printf("start: %s, end: %s\n", start, end);
-            break;
+            place_ship(board, start, end);
         } else {
             char* place_ship_menu = "";
             printf("%s\n", place_ship_menu);
+            break;
         }
     }
 }
