@@ -150,15 +150,10 @@ void start_preparation(char** board) {
         "\t- La letra puede estar en mayúsculas o minúsculas\n";
     printf("%s", place_ship_menu);
 
-    char* prompt_1 = "\nIngresa las coordenadas de inicio y fin del barco\n";
-
-    char* prompt_2 = "\n¿Estás segur@ que desas continuar?\n"
-        "[0] No\n"
-        "[1] Sí\n";
-
     while (!confirmed_ships) {
         if (count_placed_ships(board) != 3) {
-            printf("%s", prompt_1);
+            char* prompt = "\nIngresa las coordenadas de inicio y fin del barco\n";
+            printf("%s", prompt);
             char start[20];
             char end[20];
             scanf("%s %s", start, end);
@@ -175,15 +170,17 @@ void start_preparation(char** board) {
             printf("%s", error_msg);
             }
         } else {
-            printf("%s", prompt_2);
-            printf("Hello world");
-            char option;
-            scanf("%c", &option);
-            if (option == '0') {
-                restart_board(board);
-            } else if (option == '1') {
-                confirmed_ships = 1;
-            }
+            char* prompt = "\n¿Estás segur@ que desas continuar?\n"
+                "[0] No\n"
+                "[1] Sí\n";
+            printf("%s", prompt);
+            // char option;
+            // scanf("%c", &option);
+            // if (option == '0') {
+            //     restart_board(board);
+            // } else if (option == '1') {
+            //     confirmed_ships = 1;
+            // }
         }
     }
 }
