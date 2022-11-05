@@ -151,7 +151,6 @@ void start_preparation(char** board) {
     printf("%s", place_ship_menu);
 
     while (!confirmed_ships) {
-        printf("Number of ships: %d\n", count_placed_ships(board));
         if (count_placed_ships(board) != 3) {
             char* prompt = "\nIngresa las coordenadas de inicio y fin del barco\n";
             printf("%s", prompt);
