@@ -147,12 +147,12 @@ void start_preparation(char** board) {
         "Para ingresar las coordenadas considera lo siguiente\n"
         "\t- Pueden estar separadas por un espacio o por Enter\n"
         "\t- Deben ser de la forma Letra Número (por ejemplo A1)\n"
-        "\t- La letra puede estar en mayúsculas o minúsculas\n";
+        "\t- La letra puede estar en mayúsculas o minúsculas\n\n";
     printf("%s", place_ship_menu);
 
     while (!confirmed_ships) {
         if (count_placed_ships(board) != 3) {
-            char* prompt = "\nIngresa las coordenadas de inicio y fin del barco\n";
+            char* prompt = "Ingresa las coordenadas de inicio y fin del barco\n";
             printf("%s", prompt);
             char start[20];
             char end[20];
@@ -161,26 +161,29 @@ void start_preparation(char** board) {
             printf("\n");
             if (status == 0) {
                 print_grid(board);
+                printf("\n");
             } else {
                 char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
                 "\t- Seguir el formato para ingresar coordenadas\n"
                 "\t- Los barcos solo pueden estar horizontal o verticalmente\n"
                 "\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
-                "\t- Un barco no puede chocar con otro\n";
+                "\t- Un barco no puede chocar con otro\n\n";
             printf("%s", error_msg);
             }
         } else {
-            char* prompt = "\n¿Estás segur@ que desas continuar?\n"
+            char* prompt = "¿Estás segur@ que desas continuar?\n"
                 "[0] No\n"
                 "[1] Sí\n";
             printf("%s", prompt);
             char option[20];
             scanf(" %s", option);
+            printf("\n");
             if (strlen(option) != 1) {
                 continue;
             } else if (option[0] == '0') {
                 restart_board(board);
                 print_grid(board);
+                printf("\n");
             } else if (option[0] == '1') {
                 confirmed_ships = 1;
             }
