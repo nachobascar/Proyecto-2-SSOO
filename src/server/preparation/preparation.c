@@ -10,7 +10,16 @@ char** create_board() {
         }
     }
     grid[3][3] = 'O';
-    grid[3][4] = 'O';
+    grid[4][3] = 'O';
+
+    grid[2][1] = 'O';
+    grid[3][1] = 'O';
+    grid[4][1] = 'O';
+
+    // grid[3][3] = 'O';
+    // grid[4][3] = 'O';
+    // grid[3][3] = 'O';
+    // grid[4][3] = 'O';
 
     return grid;
 }
