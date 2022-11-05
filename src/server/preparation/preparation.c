@@ -82,7 +82,7 @@ void place_ship(char** board, char* start, char* end) {
     // if (char_to_pos(start[0]) == end[1] - '0') {
 
     // }
-    printf("Position: %d, %d\n", char_to_pos(start[0]), end[1] - '0');
+    printf("Position: %d, %d\n", char_to_pos(start[0]), end[1] - '0' - 1);
 }
 
 void close_board(char** board) {
