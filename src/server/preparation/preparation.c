@@ -105,7 +105,6 @@ int place_ship(char** board, char* start, char* end) {
         for (int i = range[0]; i <= range[1]; i++) {
             board[start_pos[0]][i] = 'O';
         }
-        print_grid(board);
         return 0;
 
     } else if (start_pos[1] == end_pos[1]) {
@@ -123,7 +122,6 @@ int place_ship(char** board, char* start, char* end) {
         for (int i = range[0]; i <= range[1]; i++) {
             board[i][start_pos[1]] = 'O';
         }
-        print_grid(board);
         return 0;
 
     } else {
