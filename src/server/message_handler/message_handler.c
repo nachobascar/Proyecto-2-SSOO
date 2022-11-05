@@ -10,6 +10,17 @@ void handle_id_0(player* player, server *server, int id, int data_length, char *
   int room_id, player_id;
   struct player* old_player = find_disconnected_player_on_room(player_name, &room_id, &player_id, server);
   if (old_player == NULL) {
+    // Check if name is already taken
+    int disponible = is_name_disponible(player_name, server);
+    if (!disponible) {
+      // Send error message
+      char error_message[256];
+      error_message[0] = 0;
+      strcpy(error_message + 1, "Name already taken");
+      send_message(player->socket, 0, strlen(error_message), error_message);
+      return;
+    }
+
     // If not, create a new player
     strcpy(player->name, player_name);
     // Add the player to the lobby
@@ -18,7 +29,8 @@ void handle_id_0(player* player, server *server, int id, int data_length, char *
 
     // Send to the player the list of rooms
     char data[255];
-    int data_length = 0;
+    int data_length = 1;
+    data[0] = 1;
     for (int i = 0; i < server->rooms_size; i++) {
       char room_id[4];
       sprintf(room_id, "%d", i);
@@ -74,7 +86,8 @@ void handle_id_1(player* player, server *server, int id, int data_length, char *
 void handle_id_2(player* player, server *server, int id, int data_length, char *data) {
   // Send to the player the list of rooms
   char data[255];
-  int data_length = 0;
+  int data_length = 1;
+  data[0] = 1;
   for (int i = 0; i < server->rooms_size; i++) {
     char room_id[4];
     sprintf(room_id, "%d", i);
