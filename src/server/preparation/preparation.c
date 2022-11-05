@@ -131,6 +131,15 @@ int place_ship(char** board, char* start, char* end) {
     return -1;
 }
 
+void restart_board(char** board) {
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            char c = ' ';
+            board[i][j] = c;
+        }
+    }
+}
+
 void start_preparation(char** board) {
     int confirmed_ships = 0;
 
@@ -161,9 +170,19 @@ void start_preparation(char** board) {
             printf("%s", error_msg);
             }
         } else {
-            char* place_ship_menu = "";
-            printf("%s\n", place_ship_menu);
-            break;
+            char* prompt = "\n¿Estás segur@ que desas continuar?\n"
+                "[0] No\n"
+                "[1] Sí\n";
+            printf("%s", prompt);
+            int option;
+            scanf("%d", &option);
+            if (!(option == 0 || option == 1)) {
+                continue;
+            } else if (!option){
+                restart_board(board);
+            } else {
+                confirmed_ships = 1;
+            }
         }
     }
 }
