@@ -138,14 +138,9 @@ void start_preparation(char** board) {
         if (count_placed_ships(board) != 3) {
             char* place_ship_menu = "";
             printf("%s\n", place_ship_menu);
-            char* ship_pos;
-            scanf("%s", &ship_pos);
-            if (strlen(ship_pos) != 5) {
-                printf("Las coordenadas no fueron ingresadas en el formato correcto.\n");
-                continue;
-            }
-            char start[] = {ship_pos[0], ship_pos[1]};
-            char end[] = {ship_pos[3], ship_pos[4]};
+            char start[2];
+            char end[2];
+            scanf("%s %s", start, end);
             printf("start: %s, end: %s\n", start, end);
         } else {
             char* place_ship_menu = "";
