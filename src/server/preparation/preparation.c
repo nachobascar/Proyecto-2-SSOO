@@ -51,9 +51,38 @@ int count_placed_ships(char** board) {
     return placed_ships;
 }
 
+char char_to_pos(char character) {
+    int pos;
+    switch (character) {
+        case 'A':
+            pos = 0;
+            break;
+        case 'B':
+            pos = 1;
+            break;
+        case 'C':
+            pos = 2;
+            break;
+        case 'D':
+            pos = 3;
+            break;
+        case 'E':
+            pos = 4;
+            break;
+        default:
+            break;
+    }
+    return pos;
+}
+
 void place_ship(char** board, char* start, char* end) {
     int placed_ships = count_placed_ships(board);
     printf("Placed ships: %d\n", placed_ships);
+
+    // if (char_to_pos(start[0]) == end[1] - '0') {
+
+    // }
+    printf("Position: %d, %d\n", char_to_pos(start[0]), end[1] - '0');
 }
 
 void close_board(char** board) {
