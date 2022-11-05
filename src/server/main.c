@@ -2,6 +2,7 @@
 
 #include "socket/socket.h"
 #include "preparation/preparation.h"
+#include "server_structures/server_structures.h"
 
 int main(int argc, char *argv[]) {
     printf("Hello, World! Im the server\n\n");
