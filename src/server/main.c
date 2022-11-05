@@ -29,10 +29,9 @@ int main(int argc, char *argv[]) {
     printf("TCP port: %d\n\n", tcp_port);
 
     player player;
-    create_player_board(player);
 
-    print_grid(player.board);
-    close_board(player.board);
+    // print_grid(player.board);
+    // close_board(player.board);
 
     // // Initialize the server
     // int socket_fd = create_socket(ip_address, tcp_port);

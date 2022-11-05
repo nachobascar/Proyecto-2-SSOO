@@ -1,6 +1,6 @@
 #include "preparation.h"
 
-void create_player_board(player player) {
+char** create_player_board() {
     char** grid = malloc(5 * sizeof(char*));
     for (int i = 0; i < 5; i++) {
         grid[i] = malloc(5 * sizeof(char));
@@ -10,7 +10,7 @@ void create_player_board(player player) {
         }
     }
 
-    player.board = grid;
+    return grid;
 }
 
 void close_board(char** board) {
