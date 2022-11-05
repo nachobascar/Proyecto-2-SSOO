@@ -177,6 +177,7 @@ void start_preparation(char** board) {
             int option;
             scanf(" %d", &option);
             if (option == 0) {
+                printf("Enter here?\n");
                 restart_board(board);
             } else if (option == 1) {
                 confirmed_ships = 1;
