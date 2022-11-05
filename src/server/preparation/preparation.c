@@ -174,12 +174,13 @@ void start_preparation(char** board) {
                 "[0] No\n"
                 "[1] Sí\n";
             printf("%s", prompt);
-            int option;
-            scanf(" %d", &option);
-            if (option == 0) {
-                printf("Enter here?\n");
+            char option[20];
+            scanf(" %s", option);
+            if (strlen(option) != 1) {
+                continue;
+            } else if (option[0] == '0') {
                 restart_board(board);
-            } else if (option == 1) {
+            } else if (option[0] == '1') {
                 confirmed_ships = 1;
             }
         }
