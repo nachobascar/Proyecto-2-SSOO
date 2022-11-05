@@ -84,11 +84,24 @@ void place_ship(char** board, char* start, char* end) {
         int range[] = {start_pos[1], end_pos[1]};
         sort_range(range);
         for (int i = range[0]; i <= range[1]; i++) {
+            if (board[start_pos[0]][i] == 'O') {
+                printf("F\n");
+                return;
+            }
+        }
+        for (int i = range[0]; i <= range[1]; i++) {
             board[start_pos[0]][i] = 'O';
         }
+
     } else if (start_pos[1] == end_pos[1]) {
         int range[] = {start_pos[0], end_pos[0]};
         sort_range(range);
+        for (int i = range[0]; i <= range[1]; i++) {
+            if (board[start_pos[0]][i] == 'O') {
+                printf("F\n");
+                return;
+            }
+        }
         for (int i = range[0]; i <= range[1]; i++) {
             board[i][start_pos[1]] = 'O';
         }
