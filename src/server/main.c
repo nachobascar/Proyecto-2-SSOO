@@ -38,18 +38,17 @@ int main(int argc, char *argv[]) {
     // Free board memory
     close_board(player.board);
 
-    // // Initialize the server
-    // int socket_fd = create_socket(ip_address, tcp_port);
-    // server server = init_server(socket_fd);
-    // printf("Socket created\n");
+    // Initialize the server
+    int socket_fd = create_socket(ip_address, tcp_port);
+    server server = init_server(socket_fd);
+    printf("Socket created\n");
 
+    // Listen for connections
+    accept_connections(socket_fd, &server);
 
-    // // Listen for connections
-    // accept_connections(socket_fd, server);
-
-    // // Close the socket
-    // close(socket_fd);
-    // printf("Socket closed\n");
+    // Close the socket
+    close(socket_fd);
+    printf("Socket closed\n");
 
     return 0;
 }

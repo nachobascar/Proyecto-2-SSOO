@@ -8,6 +8,14 @@ int create_socket(char *ip_address, int port) {
     exit(EXIT_FAILURE);
   }
 
+  // Set the socket options
+  int opt = 1;
+  int ret = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+  if (ret < 0) {
+    perror("Error setting socket options");
+    exit(EXIT_FAILURE);
+  }
+
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
   server_address.sin_port = htons(port);
@@ -23,24 +31,29 @@ int create_socket(char *ip_address, int port) {
 }
 
 // Handle the message sent from client
-void handle_package(int client_socket_fd, char buffer[257], server server) {
-  switch (buffer[0])
+void handle_package(player* player, char buffer[257], server *server) {
+  int id = buffer[0];
+  int data_length = atoi(buffer + 1);
+  char data[256];
+  memcpy(data, &buffer[2], data_length);
+  data[data_length] = '\0';
+
+  switch (id)
   {
   case 0: ;
     // Init player. The package is the player name
-    char player_name[256];
-    int i;
-    for (i = 0; i < 255; i++) {
-      player_name[i] = buffer[i + 2];
-    }
-    player_name[i] = '\0';
-
-    // Create player and add to the lobby
-    // init_player(client_socket_fd, player_name, server);
-    printf("Player %s joined the lobby\n", player_name);
-
+    handle_id_0(player, server, id, data_length, data);
     break;
   
+  case 1: ;
+    // Enter user in the room
+    handle_id_1(player, server, id, data_length, data);
+    break;
+  case 2: ;
+    // Request for updated rooms list
+    handle_id_2(player, server, id, data_length, data);
+    break;
+
   default:
     break;
   }
@@ -49,14 +62,35 @@ void handle_package(int client_socket_fd, char buffer[257], server server) {
 // Data structure to pass multiple arguments to the thread
 struct connection_init_args {
   int client_socket_fd;
-  server server;
+  server *server;
 };
+
+// Handle the logic of a client disconnection
+void handle_client_disconnection(int client_socket_fd, server *server) {
+  // Find the player on the lobby
+  player *player = find_player_on_lobby_by_socket(client_socket_fd, &(server->lobby));
+  if (player != NULL) {
+    // If the player is on the lobby, remove it
+    remove_player_from_lobby(player, &server->lobby);
+    printf("Player %s left the lobby\n", player->name);
+    free(player);
+  } else {
+    // If the player is on active room, remove it
+    player = find_player_on_room_by_socket(client_socket_fd, server);
+    if (player != NULL) {
+      strcpy(player->status, "disconnected");
+      printf("Player %s got disconnected\n", player->name);
+    }
+  }
+}
 
 
 // Handle the connection with the client
 void *handle_client(void *args) {
   int client_socket_fd = ((struct connection_init_args*) args)->client_socket_fd;
-  server server = ((struct connection_init_args*) args)->server;
+  server *server = ((struct connection_init_args*) args)->server;
+
+  player* player = init_player(client_socket_fd, "");
 
   char buffer[257];
   while (1) {
@@ -64,21 +98,23 @@ void *handle_client(void *args) {
     int read_status = read(client_socket_fd, buffer, 2);
     if (read_status < 0) {
       perror("Error reading from socket");
+      handle_client_disconnection(client_socket_fd, server);
       exit(EXIT_FAILURE);
     }
 
     read_status = read(client_socket_fd, &(buffer[2]), buffer[1]);
     if (read_status < 0) {
       perror("Error reading package from socket");
+      handle_client_disconnection(client_socket_fd, server);
       exit(EXIT_FAILURE);
     }
 
-    handle_package(client_socket_fd, buffer, server);
+    handle_package(player, buffer, server);
   }
 }
 
 // Start listening for connections
-int accept_connections(int socket_fd, server server) {
+int accept_connections(int socket_fd, server *server) {
   while (1) {
     struct sockaddr_in client_address;
     socklen_t client_address_length = sizeof(client_address);
@@ -97,5 +133,22 @@ int accept_connections(int socket_fd, server server) {
     // Start thread for client
     pthread_t thread;
     pthread_create(&thread, NULL, handle_client, (void *) &args);
+  }
+}
+
+// Send a package to the client
+void send_package(int client_socket_fd, int id, int data_length, char *data, server *server) {
+  char buffer[257];
+  buffer[0] = id;
+  buffer[1] = data_length;
+  for (int i = 0; i < data_length; i++) {
+    buffer[i + 2] = data[i];
+  }
+
+  int write_status = write(client_socket_fd, buffer, data_length + 2);
+  if (write_status < 0) {
+    perror("Error writing to socket");
+    handle_client_disconnection(client_socket_fd, server);
+    exit(EXIT_FAILURE);
   }
 }
