@@ -7,12 +7,8 @@
 typedef struct player {
   int socket;
   char* name;
-<<<<<<< HEAD
-  int status;
   char** board;
-=======
   char status[50];
->>>>>>> main
 } player;
 
 typedef struct room {
