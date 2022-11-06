@@ -56,12 +56,12 @@ int main (int argc, char *argv[]){
       char * message = client_receive_payload(server_socket, &payload_size);
       printf("Existen %i salas en el servidor\n", (payload_size)/8);
 
-      if ((int) message == 0) {
+      if ((char) message == '0') {
         printf("El nombre de usuario ya existe, por favor ingrese otro\n");
         username = get_input();
         client_send_message(server_socket, 0, username);
       } else {
-        for (int i = 0; i < payload_size; i+=8){
+        for (int i = 1; i < payload_size; i+=8){
           printf("Sala %i: %i/%i jugadores  \n", (i/8) + 1, message[i], message[i+4]);
         }
 
@@ -83,13 +83,87 @@ int main (int argc, char *argv[]){
 
       } else {
         printf("Se ha unido a la sala %i\n", message[0]);
-        printf("Que desea hacer?\n 1) Jugar\n 2) Salir\n");
+        printf("Que desea hacer?\n 1) Jugar\n 2) Salir de la sala\n");
         int option = getchar() - '0';
         getchar();
         client_send_message(server_socket, option+2, "");
 
       }
 
+      free(message);
+    }
+    if (msg_code == 2) { 
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+
+      if (payload_size == 0) {
+        printf("Fase de preparación iniciada\n");
+      } else {
+        printf(message);
+      }
+      
+      char * grid = malloc(5*5*sizeof(char));
+      print_grid(&grid);
+
+      char response[12];
+      
+      printf("Ingrese la coordenada de inicio del barco de largo 2\n");
+      response[0] = get_input();
+      printf("Ingrese la coordenada de fin del barco de largo 2\n");
+      response[2] = get_input();
+      printf("Ingrese la coordenada de inicio del barco de largo 3\n");
+      response[4] = get_input();
+      printf("Ingrese la coordenada de fin del barco de largo 3\n");
+      response[6] = get_input();
+      printf("Ingrese la coordenada de inicio del barco de largo 4\n");
+      response[8] = get_input();
+      printf("Ingrese la coordenada de fin del barco de largo 4\n");
+      response[10] = get_input();
+
+      client_send_message(server_socket, 5, response);
+      
+      free(grid);
+      free(message);
+    }
+    if (msg_code == 3) { 
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      printf("Su tablero es:\n");
+      print_grid(&message);
+      printf("¿Está seguro que desea continuar?\n 1) Sí\n 2) No\n");
+      int option = getchar() - '0';
+      getchar();
+      if (option == 2) {
+        char * grid = malloc(5*5*sizeof(char));
+        print_grid(&grid);
+
+        char response[12];
+        
+        printf("Ingrese la coordenada de inicio del barco de largo 2\n");
+        response[0] = get_input();
+        printf("Ingrese la coordenada de fin del barco de largo 2\n");
+        response[2] = get_input();
+        printf("Ingrese la coordenada de inicio del barco de largo 3\n");
+        response[4] = get_input();
+        printf("Ingrese la coordenada de fin del barco de largo 3\n");
+        response[6] = get_input();
+        printf("Ingrese la coordenada de inicio del barco de largo 4\n");
+        response[8] = get_input();
+        printf("Ingrese la coordenada de fin del barco de largo 4\n");
+        response[10] = get_input();
+
+        client_send_message(server_socket, 5, response);
+        
+        free(grid);
+      } else {
+        client_send_message(server_socket, 6, "");
+      }
+      free(message);
+    }
+    if (msg_code == 4) { 
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      printf("Esperando a que el otro jugador coloque sus barcos\n");
       free(message);
     }
     printf("------------------\n");
