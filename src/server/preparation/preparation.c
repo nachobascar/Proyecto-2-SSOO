@@ -88,6 +88,25 @@ int check_ship_length(int ship_length, int placed_ships) {
     return 0;
 }
 
+// Return a char with the lenght of the next ship
+char next_ship_length(int placed_sips) {
+    char ship_length;
+    switch (placed_sips) {
+        case 0:
+            ship_length = '2';
+            break;
+        case 1:
+            ship_length = '3';
+            break;
+        case 2:
+            ship_length = '4';
+            break;
+        default:
+            break;
+    }
+    return ship_length;
+}
+
 // Place a ship in the board given start and end position
 // Return 0 if placed correctly, if not return -1
 int place_ship(char** board, char* start, char* end) {
@@ -106,12 +125,12 @@ int place_ship(char** board, char* start, char* end) {
             return -1;
         }
         for (int i = range[0]; i <= range[1]; i++) {
-            if (board[start_pos[0]][i] == 'O') {
+            if (board[start_pos[0]][i] != ' ') {
                 return -1;
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
-            board[start_pos[0]][i] = 'O';
+            board[start_pos[0]][i] = next_ship_length(count_placed_ships(board));
         }
         return 0;
 
@@ -123,12 +142,12 @@ int place_ship(char** board, char* start, char* end) {
             return -1;
         }
         for (int i = range[0]; i <= range[1]; i++) {
-            if (board[i][start_pos[1]] == 'O') {
+            if (board[i][start_pos[1]] != ' ') {
                 return -1;
             }
         }
         for (int i = range[0]; i <= range[1]; i++) {
-            board[i][start_pos[1]] = 'O';
+            board[i][start_pos[1]] = next_ship_length(count_placed_ships(board));
         }
         return 0;
 
