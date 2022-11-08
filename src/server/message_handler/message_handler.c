@@ -82,6 +82,12 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 		room->n_players++;
 		strcpy(player->status, "waiting");
 
+		// Remove the player from the lobby
+		remove_player_from_lobby(player, &server->lobby);
+		printf("Player %s joined the room %d\n", player->name, room_id);
+		// Send to the player the room id
+		send_package(player->socket, 1, 1, data, server);
+
 		if (room->n_players == 2) {
 			// If the room is full, start the game
 			for (int i = 0; i < 2; i++) {
@@ -90,12 +96,6 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 				send_package(room->players[i]->socket, 9, 0, NULL, server);
 			}
 		}
-
-		// Remove the player from the lobby
-		remove_player_from_lobby(player, &server->lobby);
-		printf("Player %s joined the room %d\n", player->name, room_id);
-		// Send to the player the room id
-		send_package(player->socket, 1, 1, data, server);
 	}
 }
 
@@ -127,8 +127,19 @@ void handle_id_3(player* player, server* server, int id, int aux_data_length, ch
 		message[0] = 1;
 		send_package(player->socket, 10, 1, message, server);
 	}
-	else if (strcmp(room->players[!player->player_id]->status, "confirmed") == 0) {
+	else if (room->players[!player->player_id] != NULL && strcmp(room->players[!player->player_id]->status, "confirmed") == 0) {
 		// If the other player is confirmed, start the game
+    char *message = "Seleccione la posición del barco de tamaño 2\n";
+    char buffer[255];
+    for (int i = 0; i < 25; i++) {
+      buffer[i] = ' ';
+    }
+    buffer[25] = 1;
+    strcpy(buffer + 26, message);
+    for (int i = 0; i < 2; i++) {
+      send_package(room->players[i]->socket, 2, 27 + strlen(message), buffer, server);
+      strcpy(room->players[i]->status, "boat 2");
+    }
 	}
 }
 
