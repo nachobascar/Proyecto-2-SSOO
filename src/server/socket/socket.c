@@ -52,6 +52,14 @@ void handle_package(player *player, char buffer[257], server *server) {
 		// Request for updated rooms list
 		handle_id_2(player, server, id, data_length, data);
 		break;
+	case 3:;
+		// Confirmation of user to play
+		handle_id_3(player, server, id, data_length, data);
+		break;
+	case 4:;
+		// Request for user to not play
+		handle_id_4(player, server, id, data_length, data);
+		break;
 	case 5:;
 		// Receive coordinates of the shot
 		handle_id_5(player, server, id, data_length, data);
