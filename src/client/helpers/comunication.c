@@ -12,6 +12,9 @@ char * client_receive_payload(int client_socket, int* payload_size){
   char payload_s[1];
   recv(client_socket, payload_s, 1, 0);
   *payload_size = payload_s[0];
+  if (*payload_size == 0){
+    return NULL;
+  }
   // Se obtiene el payload
   char * payload = malloc(*payload_size);
   int received = recv(client_socket, payload, *payload_size, 0);
