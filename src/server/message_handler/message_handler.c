@@ -17,7 +17,7 @@ void handle_id_0(player* player, server *server, int id, int data_length, char *
       char error_message[256];
       error_message[0] = 0;
       strcpy(error_message + 1, "Name already taken");
-      send_message(player->socket, 0, strlen(error_message), error_message);
+      send_package(player->socket, 0, strlen(error_message), NULL, server);
       return;
     }
 
@@ -83,7 +83,7 @@ void handle_id_1(player* player, server *server, int id, int data_length, char *
 }
 
 // Request for updated rooms list
-void handle_id_2(player* player, server *server, int id, int data_length, char *data) {
+void handle_id_2(player* player, server *server, int id, int aux_data_length, char *aux_data) {
   // Send to the player the list of rooms
   char data[255];
   int data_length = 1;
