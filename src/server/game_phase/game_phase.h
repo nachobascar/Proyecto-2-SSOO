@@ -9,16 +9,16 @@
 #include "../socket/socket.h"
 
 // send text without expecting a response
-const int SEND_TEXT_ID = 5;
+static int SEND_TEXT_ID = 5;
 
 // send text and expect a response
-const int PENDING_INFO_ID = 6;
+static int PENDING_INFO_ID = 6;
 
 // Send the boards to the players
-const int SEND_BOARD_ID = 7;
+static int SEND_BOARD_ID = 7;
 
 // game finished
-const int GAME_FINISHED_ID = 8;
+static int GAME_FINISHED_ID = 8;
 
 bool check_coordinates(char* coordinates, char** board);
 
