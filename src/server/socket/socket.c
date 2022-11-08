@@ -33,7 +33,7 @@ int create_socket(char *ip_address, int port) {
 // Handle the message sent from client
 void handle_package(player* player, char buffer[257], server *server) {
   int id = buffer[0];
-  int data_length = atoi(buffer + 1);
+  int data_length = (int)buffer[1];
   char data[256];
   memcpy(data, &buffer[2], data_length);
   data[data_length] = '\0';
@@ -68,6 +68,7 @@ struct connection_init_args {
 // Handle the logic of a client disconnection
 void handle_client_disconnection(int client_socket_fd, server *server) {
   // Find the player on the lobby
+  printf("Client disconnected\n");
   player *player = find_player_on_lobby_by_socket(client_socket_fd, &(server->lobby));
   if (player != NULL) {
     // If the player is on the lobby, remove it
@@ -96,17 +97,19 @@ void *handle_client(void *args) {
   while (1) {
     bzero(buffer, 257);
     int read_status = read(client_socket_fd, buffer, 2);
-    if (read_status < 0) {
+    if (read_status <= 0) {
       perror("Error reading from socket");
       handle_client_disconnection(client_socket_fd, server);
-      exit(EXIT_FAILURE);
+      // Close the socket and end the thread
+      close(client_socket_fd);
+      pthread_exit(NULL);
     }
-
-    read_status = read(client_socket_fd, &(buffer[2]), buffer[1]);
+    read_status = read(client_socket_fd, buffer + 2, buffer[1]);
     if (read_status < 0) {
       perror("Error reading package from socket");
       handle_client_disconnection(client_socket_fd, server);
-      exit(EXIT_FAILURE);
+      close(client_socket_fd);
+      pthread_exit(NULL);
     }
 
     handle_package(player, buffer, server);
@@ -138,6 +141,7 @@ int accept_connections(int socket_fd, server *server) {
 
 // Send a package to the client
 void send_package(int client_socket_fd, int id, int data_length, char *data, server *server) {
+  printf("Sending package to client %d, id: %d\n", client_socket_fd, id);
   char buffer[257];
   buffer[0] = id;
   buffer[1] = data_length;
@@ -149,6 +153,7 @@ void send_package(int client_socket_fd, int id, int data_length, char *data, ser
   if (write_status < 0) {
     perror("Error writing to socket");
     handle_client_disconnection(client_socket_fd, server);
-    exit(EXIT_FAILURE);
+    close(client_socket_fd);
+    pthread_exit(NULL);
   }
 }

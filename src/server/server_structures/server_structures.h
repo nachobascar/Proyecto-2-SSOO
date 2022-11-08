@@ -6,14 +6,18 @@
 
 typedef struct player {
   int socket;
-  char* name;
-  char status[50];
+  char name[256];
+  char status[256];
+  int room_id;
+
+  // Indice del jugador en la sala
+  int player_id;
 } player;
 
 typedef struct room {
   player *players[2];
   int n_players;
-  int status;
+  char status[256];
 } room;
 
 struct lobby_node {
