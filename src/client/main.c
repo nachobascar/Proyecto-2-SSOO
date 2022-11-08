@@ -61,8 +61,8 @@ int main (int argc, char *argv[]){
         username = get_input();
         client_send_message(server_socket, 0, username);
       } else {
-        for (int i = 1; i < payload_size; i+=8){
-          printf("Sala %i: %i/%i jugadores  \n", (i/8) + 1, message[i], message[i+4]);
+        for (int i = 1; i < payload_size; i+=2){
+          printf("Sala %i: %i/%i jugadores  \n", (i/2) + 1, message[i], message[i+1]);
         }
 
         printf("¿A qué sala desea entrar?\n");
