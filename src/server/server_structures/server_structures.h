@@ -5,35 +5,41 @@
 #include <string.h>
 
 typedef struct player {
-  int socket;
-  char* name;
-  char status[50];
+	int socket;
+	char name[256];
+	char status[256];
+	int room_id;
+
+	// Indice del jugador en la sala
+	int player_id;
+	// Estado del tablero del jugador
+	char** board;
 } player;
 
 typedef struct room {
-  player *players[2];
-  int n_players;
-  int status;
+	player* players[2];
+	int n_players;
+	char status[256];
 } room;
 
 struct lobby_node {
-  player* player;
-  struct lobby_node* next;
-  struct lobby_node* prev;
+	player* player;
+	struct lobby_node* next;
+	struct lobby_node* prev;
 };
 typedef struct lobby {
-  struct lobby_node* first;
-  struct lobby_node* last;
+	struct lobby_node* first;
+	struct lobby_node* last;
 } lobby;
 
 typedef struct server {
-  int socket;
+	int socket;
 
-  lobby lobby;
-  int lobby_size;
+	lobby lobby;
+	int lobby_size;
 
-  room rooms[10];
-  int rooms_size;
+	room rooms[10];
+	int rooms_size;
 } server;
 
 // Create and initialize the server
@@ -45,7 +51,7 @@ server init_server(int socket);
 */
 
 // Initialize the player
-player *init_player(int socket, char* name);
+player* init_player(int socket, char* name);
 
 // Check if name is disponible
 int is_name_disponible(char* name, server* server);
@@ -77,4 +83,3 @@ player* find_disconnected_player_on_room(char* name, int* room_id, int* player_i
 
 // Find a player inside room with socket
 player* find_player_on_room_by_socket(int client_socket_fd, server* server);
-
