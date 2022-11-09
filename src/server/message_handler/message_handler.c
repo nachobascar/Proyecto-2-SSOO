@@ -221,4 +221,5 @@ void handle_id_5(player* player, server* server, int id, int data_length, char* 
 
 void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
 	printf("%s\n", data);
+	print_grid(player->board);
 }

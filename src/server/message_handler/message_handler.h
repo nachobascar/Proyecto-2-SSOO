@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../client/helpers/helpers.h"
+
 #include "../game_phase/game_phase.h"
 #include "../server_structures/server_structures.h"
 #include "../socket/socket.h"
