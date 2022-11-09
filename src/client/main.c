@@ -142,15 +142,15 @@ int main (int argc, char *argv[]){
       printf(message);
       char* response = get_input();
       // Con que id mandar esto?
-      client_send_message(server_socket, 5, response);
+      client_send_message(server_socket, 7, response);
     }
     if (msg_code == 7) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
 
       // Split message in two
-      char * message1 = malloc(25);
-      char * message2 = malloc(payload_size-25);
+      char * message1 = malloc(25 * sizeof(char));
+      char * message2 = malloc(25 * sizeof(char));
       for (int i = 0; i < 25; i++){
         message1[i] = message[i];
       }
@@ -159,6 +159,8 @@ int main (int argc, char *argv[]){
       }
 
       // Print first grid
+      printf("Su tablero:\n");
+
       char ** grid1 = malloc(5*sizeof(char*));
       for (int i = 0; i < 5; i++){
         grid1[i] = malloc(5*sizeof(char));
@@ -176,6 +178,8 @@ int main (int argc, char *argv[]){
       free(grid);
 
       // Print second grid
+      printf("Tablero del oponente:\n");
+
       char ** grid2 = malloc(5*sizeof(char*));
       for (int i = 0; i < 5; i++){
         grid2[i] = malloc(5*sizeof(char));
@@ -198,7 +202,7 @@ int main (int argc, char *argv[]){
     if (msg_code == 8) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf("Juego terminado!\n");
+      printf(message);
       free(message);
     }
     if (msg_code == 9) { 
