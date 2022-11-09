@@ -230,17 +230,20 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 	printf("Start: %s\n", start);
 	printf("End: %s\n", end);
 
-	// if (count_placed_ships(player->board) != 3) {
-	// 	int status = place_ship(player->board, start, end);
-	// 	if (status == 0) {
-	// 		print_grid(player->board);
-	// 	} else {
-	// 		char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
-	// 		"\t- Seguir el formato para ingresar coordenadas\n"
-	// 		"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
-	// 		"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
-	// 		"\t- Un barco no puede chocar con otro\n\n";
-	// 	  printf("%s", error_msg);
-	// 	}
-  // }
+	if (count_placed_ships(player->board) != 3) {
+		int status = place_ship(player->board, start, end);
+		if (status == 0) {
+			print_grid(player->board);
+		} else {
+			char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
+			"\t- Seguir el formato para ingresar coordenadas\n"
+			"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
+			"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
+			"\t- Un barco no puede chocar con otro\n\n";
+
+			char output_board[25];
+			board_to_string(player->board, output_board);
+		  printf("%s", output_board);
+		}
+  }
 }

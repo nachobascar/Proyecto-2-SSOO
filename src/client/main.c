@@ -48,7 +48,7 @@ int main (int argc, char *argv[]){
   // Prueba fase de preparacion
   client_send_message(server_socket, 0, username);
   while (1) {
-    char * username = "juampi";
+    char * username = get_input();
     client_send_message(server_socket, 6, username);
   }
 
