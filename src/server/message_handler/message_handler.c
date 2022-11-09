@@ -230,9 +230,10 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 	char end_2[] = {data[4], data[5]};
 	char char_1 = start[0];
 	char char_2 = start[1];
-	char real_start = {char_1, char_2};
+	char real_start[] = {char_1, char_2};
 	printf("Start: %c\n", char_1);
 	printf("Start: %c\n", char_2);
+	printf("Start: %s\n", real_start);
 	printf("Start: %s\n", start);
 	printf("End: %s\n", end);
 	printf("End: %s\n", end_2);
