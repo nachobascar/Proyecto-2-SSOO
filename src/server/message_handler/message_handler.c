@@ -223,7 +223,7 @@ void handle_id_0(player* player, server* server, int id, int data_length, char* 
 	player->board = create_board();
 }
 
-void handle_id_6(player* player, server* server, int id, int data_length, char data[256]) {
+void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
 	print_grid(player->board);
 	char coordinates[1];
   strcpy(coordinates, data[0]);
