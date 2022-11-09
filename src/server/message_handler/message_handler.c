@@ -225,13 +225,12 @@ void handle_id_0(player* player, server* server, int id, int data_length, char* 
 
 void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
 	print_grid(player->board);
-	char coordinates[1];
-  strcpy(coordinates, data[0]);
-	// char start[] = {coordinates[0], coordinates[1]};
-	// char end[] = {coordinates[2], coordinates[3]};
-	// printf("Start: %s\n", start);
-	// printf("End: %s\n", end);
-	printf("Coordinates: %s\n", coordinates);
+	char start[] = {data[0], data[1]};
+	char end[] = {data[2], data[3]};
+	char end_2[] = {data[4], data[5]};
+	printf("Start: %s\n", start);
+	printf("End: %s\n", end);
+	printf("End: %s\n", end_2);
 
 	// if (count_placed_ships(player->board) != 3) {
 	// 	int status = place_ship(player->board, start, end);
