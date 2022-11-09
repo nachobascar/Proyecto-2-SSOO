@@ -230,7 +230,7 @@ void handle_id_6(player* player, server* server, int id, int data_length, char d
 	char start[] = {coordinates[0], coordinates[1]};
 	char end[] = {coordinates[2], coordinates[3]};
 	printf("Start: %s\n", start);
-	// printf("End: %s\n", end);
+	printf("End: %s\n", end);
 	printf("Coordinates: %s\n", coordinates);
 
 	// if (count_placed_ships(player->board) != 3) {
