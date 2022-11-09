@@ -129,17 +129,17 @@ void handle_id_3(player* player, server* server, int id, int aux_data_length, ch
 	}
 	else if (room->players[!player->player_id] != NULL && strcmp(room->players[!player->player_id]->status, "confirmed") == 0) {
 		// If the other player is confirmed, start the game
-    char *message = "Seleccione la posición del barco de tamaño 2\n";
-    char buffer[255];
-    for (int i = 0; i < 25; i++) {
-      buffer[i] = ' ';
-    }
-    buffer[25] = 1;
-    strcpy(buffer + 26, message);
-    for (int i = 0; i < 2; i++) {
-      send_package(room->players[i]->socket, 2, 27 + strlen(message), buffer, server);
-      strcpy(room->players[i]->status, "boat 2");
-    }
+		char* message = "Seleccione la posición del barco de tamaño 2\n";
+		char buffer[255];
+		for (int i = 0; i < 25; i++) {
+			buffer[i] = ' ';
+		}
+		buffer[25] = 1;
+		strcpy(buffer + 26, message);
+		for (int i = 0; i < 2; i++) {
+			send_package(room->players[i]->socket, 2, 27 + strlen(message), buffer, server);
+			strcpy(room->players[i]->status, "boat 2");
+		}
 	}
 }
 
