@@ -48,12 +48,8 @@ int main (int argc, char *argv[]){
   // Prueba fase de preparacion
   client_send_message(server_socket, 0, username);
   while (1) {
-    char response[4];
-    printf("Ingrese la coordenada de inicio del barco de largo 2\n");
-    response[0] = get_input();
-    printf("Ingrese la coordenada de fin del barco de largo 2\n");
-    response[2] = get_input();
-    client_send_message(server_socket, 6, response);
+    char * username = get_input();
+    client_send_message(server_socket, 6, username);
   }
 
   // Se inicializa un loop para recibir todo tipo de paquetes y tomar una acción al respecto
