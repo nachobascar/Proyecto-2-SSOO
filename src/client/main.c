@@ -109,18 +109,22 @@ int main (int argc, char *argv[]){
       }
       free(grid);
 
-      if (payload_size > 25) {
-        printf(message[25]);
-        char * response = get_input();
-        client_send_message(server_socket, 5, response);
+      if (message[25] == 1 ) {
+        printf("----- MENÚ DE PREPARACIÓN -----\n\n Para ingresar las coordenadas considera lo siguiente\n \t- Pueden estar separadas por un espacio o por Enter\n \t- Deben ser de la forma Letra Número (por ejemplo A1)\n \t- La letra puede estar en mayúsculas o minúsculas\n\n");
       }
+      for (int i = 26; i < payload_size; i ++ ) {
+        printf("%c", message[i]);
+      }
+
+      char * response = get_input();
+      client_send_message(server_socket, 5, response);
 
       free(message);
     }
     if (msg_code == 3) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf(message);
+      printf("%s", message);
       char* response = get_input();
       client_send_message(server_socket, 5, response);
     }
