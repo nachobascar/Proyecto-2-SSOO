@@ -224,8 +224,9 @@ void handle_id_0(player* player, server* server, int id, int data_length, char* 
 }
 
 void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
-	player->board = create_board();
 	print_grid(player->board);
 	char start[] = {data[0], data[1]};
-	printf("%s\n", start);
+	char end[] = {data[2], data[3]};
+	printf("Start: %s\n", start);
+	printf("End: %s\n", start);
 }
