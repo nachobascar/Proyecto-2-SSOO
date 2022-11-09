@@ -1,56 +1,56 @@
 
 #include "message_handler.h"
 
-// // Init player. The package is the player name
-// void handle_id_0(player* player, server* server, int id, int data_length, char data[256]) {
-// 	char player_name[256];
-// 	strcpy(player_name, data);
+// Init player. The package is the player name
+void handle_id_0(player* player, server* server, int id, int data_length, char data[256]) {
+	char player_name[256];
+	strcpy(player_name, data);
 
-// 	// Find if player is on active room
-// 	int room_id, player_id;
-// 	struct player* old_player = find_disconnected_player_on_room(player_name, &room_id, &player_id, server);
-// 	if (old_player == NULL) {
-// 		// Check if name is already taken
-// 		int disponible = is_name_disponible(player_name, server);
-// 		if (!disponible) {
-// 			// Send error message
-// 			char error_message[256];
-// 			error_message[0] = 0;
-// 			strcpy(error_message + 1, "Name already taken");
-// 			send_package(player->socket, 0, strlen(error_message), NULL, server);
-// 			return;
-// 		}
+	// Find if player is on active room
+	int room_id, player_id;
+	struct player* old_player = find_disconnected_player_on_room(player_name, &room_id, &player_id, server);
+	if (old_player == NULL) {
+		// Check if name is already taken
+		int disponible = is_name_disponible(player_name, server);
+		if (!disponible) {
+			// Send error message
+			char error_message[256];
+			error_message[0] = 0;
+			strcpy(error_message + 1, "Name already taken");
+			send_package(player->socket, 0, strlen(error_message), NULL, server);
+			return;
+		}
 
-// 		// If not, create a new player
-// 		strncpy(player->name, player_name, 255);
-// 		// Add the player to the lobby
-// 		add_player_to_lobby(player, &server->lobby);
-// 		printf("Player %s joined the lobby\n", player_name);
+		// If not, create a new player
+		strncpy(player->name, player_name, 255);
+		// Add the player to the lobby
+		add_player_to_lobby(player, &server->lobby);
+		printf("Player %s joined the lobby\n", player_name);
 
-// 		// Send to the player the list of rooms
-// 		char data[255];
-// 		int data_length = 1;
-// 		data[0] = 1;
-// 		for (int i = 0; i < server->rooms_size; i++) {
-// 			int room_id = i;
-// 			int n_players = server->rooms[i].n_players;
-// 			data[data_length++] = room_id;
-// 			data[data_length++] = n_players;
-// 		}
-// 		send_package(player->socket, 0, data_length, data, server);
-// 	}
-// 	else {
-// 		// If the player is on active room, update the socket fd
-// 		strcpy(player->name, player_name);
-// 		strcpy(player->status, "playing");
-// 		player->room_id = room_id;
-// 		player->player_id = player_id;
-// 		// Update player on room
-// 		server->rooms[room_id].players[player_id] = player;
-// 		printf("Player %s rejoined the game\n", player_name);
-// 		free(old_player);
-// 	}
-// }
+		// Send to the player the list of rooms
+		char data[255];
+		int data_length = 1;
+		data[0] = 1;
+		for (int i = 0; i < server->rooms_size; i++) {
+			int room_id = i;
+			int n_players = server->rooms[i].n_players;
+			data[data_length++] = room_id;
+			data[data_length++] = n_players;
+		}
+		send_package(player->socket, 0, data_length, data, server);
+	}
+	else {
+		// If the player is on active room, update the socket fd
+		strcpy(player->name, player_name);
+		strcpy(player->status, "playing");
+		player->room_id = room_id;
+		player->player_id = player_id;
+		// Update player on room
+		server->rooms[room_id].players[player_id] = player;
+		printf("Player %s rejoined the game\n", player_name);
+		free(old_player);
+	}
+}
 
 // Enter user in the room
 void handle_id_1(player* player, server* server, int id, int data_length, char* data) {
@@ -218,32 +218,46 @@ void handle_id_5(player* player, server* server, int id, int data_length, char* 
 	opponent_turn(opponent->name, player->socket, server);
 }
 
-
-void handle_id_0(player* player, server* server, int id, int data_length, char* data) {
-	player->board = create_board();
-}
-
+// Place a ship. Recieves the coordenates of the ship
 void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
+	// player->board = create_board();
 	print_grid(player->board);
 	char start[] = {data[0], data[1]};
 	char end[] = {data[2], data[3]};
 	printf("Start: %s\n", start);
 	printf("End: %s\n", end);
 
-	if (count_placed_ships(player->board) != 3) {
-		int status = place_ship(player->board, start, end);
-		if (status == 0) {
-			print_grid(player->board);
+	int status = place_ship(player->board, start, end);
+	if (status == 0) {
+		char output_board[25];
+		board_to_string(player->board, output_board);
+		if (count_placed_ships(player->board) < 3) {
+			// Send output board and enter coordenates (id 3)
 		} else {
-			char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
-			"\t- Seguir el formato para ingresar coordenadas\n"
-			"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
-			"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
-			"\t- Un barco no puede chocar con otro\n\n";
-
-			char output_board[25];
-			board_to_string(player->board, output_board);
-		  printf("%s", output_board);
+			// Send output board and confirm prompt (id 5)
 		}
-  }
+	} else {
+		char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
+		"\t- Seguir el formato para ingresar coordenadas\n"
+		"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
+		"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
+		"\t- Un barco no puede chocar con otro\n\n";
+		// Send error (id 4)
+	}
+}
+
+// Confirm ships positions. Recieves 1 or 0
+void handle_id_7(player* player, server* server, int id, int data_length, char* data) {
+	print_grid(player->board);
+	int confirm = data[0];
+	char end[] = {data[2], data[3]};
+	
+	if (confirm) {
+	  // Game phase;
+	} else {
+		restart_board(player->board);
+		char output_board[25];
+		board_to_string(player->board, output_board);
+		// Send output board and enter coordenates (id 3)
+	}
 }

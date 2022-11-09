@@ -22,3 +22,6 @@ int count_placed_ships(char** board);
 // Place a ship in the board given start and end position
 // Return 0 if placed correctly, if not return -1
 int place_ship(char** board, char* start, char* end);
+
+// Empty board positions
+void restart_board(char** board);
