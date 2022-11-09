@@ -130,6 +130,77 @@ int main (int argc, char *argv[]){
       printf("Esperando a que el otro jugador coloque sus barcos\n");
       free(message);
     }
+    if (msg_code == 5) { 
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      printf(message);
+      free(message);
+    }
+    if (msg_code == 6) { 
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      printf(message);
+      char* response = get_input();
+      // Con que id mandar esto?
+      client_send_message(server_socket, 5, response);
+    }
+    if (msg_code == 7) { 
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+
+      // Split message in two
+      char * message1 = malloc(25);
+      char * message2 = malloc(payload_size-25);
+      for (int i = 0; i < 25; i++){
+        message1[i] = message[i];
+      }
+      for (int i = 25; i < payload_size; i++){
+        message2[i-25] = message[i];
+      }
+
+      // Print first grid
+      char ** grid1 = malloc(5*sizeof(char*));
+      for (int i = 0; i < 5; i++){
+        grid1[i] = malloc(5*sizeof(char));
+      }
+      for (int i = 0; i < 5; i++){
+        for (int j = 0; j < 5; j++){
+          grid1[i][j] = message1[i*5 + j];
+        }
+      }
+
+      print_grid(grid);
+      for (int i = 0; i < 5; i++){
+        free(grid[i]);
+      }
+      free(grid);
+
+      // Print second grid
+      char ** grid2 = malloc(5*sizeof(char*));
+      for (int i = 0; i < 5; i++){
+        grid2[i] = malloc(5*sizeof(char));
+      }
+      for (int i = 0; i < 5; i++){
+        for (int j = 0; j < 5; j++){
+          grid2[i][j] = message2[i*5 + j];
+        }
+      }
+
+      print_grid(grid2);
+      for (int i = 0; i < 5; i++){
+        free(grid2[i]);
+      }
+
+      free(message);
+      free(message1);
+      free(message2);
+    }
+    if (msg_code == 8) { 
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      printf("Juego terminado!\n");
+      free(message);
+    }
     if (msg_code == 9) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
