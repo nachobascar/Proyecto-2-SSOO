@@ -170,8 +170,51 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 	}
 }
 
-// Game phase handler. Player shoots opponent
+// Place a ship. Recieves the coordenates of the ship
 void handle_id_5(player* player, server* server, int id, int data_length, char* data) {
+	// player->board = create_board();
+	print_grid(player->board);
+	char start[] = {data[0], data[1]};
+	char end[] = {data[2], data[3]};
+	printf("Start: %s\n", start);
+	printf("End: %s\n", end);
+
+	int status = place_ship(player->board, start, end);
+	if (status == 0) {
+		char output_board[25];
+		board_to_string(player->board, output_board);
+		if (count_placed_ships(player->board) < 3) {
+			// Send output board and enter coordenates (id 3)
+		} else {
+			// Send output board and confirm prompt (id 5)
+		}
+	} else {
+		char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
+		"\t- Seguir el formato para ingresar coordenadas\n"
+		"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
+		"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
+		"\t- Un barco no puede chocar con otro\n\n";
+		// Send error (id 4)
+	}
+}
+
+// Confirm ships positions. Recieves 1 or 0
+void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
+	print_grid(player->board);
+	int confirm = data[0];
+	
+	if (confirm) {
+	  // Game phase;
+	} else {
+		restart_board(player->board);
+		char output_board[25];
+		board_to_string(player->board, output_board);
+		// Send output board and enter coordenates (id 3)
+	}
+}
+
+// Game phase handler. Player shoots opponent
+void handle_id_7(player* player, server* server, int id, int data_length, char* data) {
 	char coordinates[2];
 	coordinates[0] = data[0];
 	coordinates[1] = data[1];
@@ -216,48 +259,4 @@ void handle_id_5(player* player, server* server, int id, int data_length, char* 
 	// "Change turn" message
 	is_your_turn(opponent, server);
 	opponent_turn(opponent->name, player->socket, server);
-}
-
-// Place a ship. Recieves the coordenates of the ship
-void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
-	// player->board = create_board();
-	print_grid(player->board);
-	char start[] = {data[0], data[1]};
-	char end[] = {data[2], data[3]};
-	printf("Start: %s\n", start);
-	printf("End: %s\n", end);
-
-	int status = place_ship(player->board, start, end);
-	if (status == 0) {
-		char output_board[25];
-		board_to_string(player->board, output_board);
-		if (count_placed_ships(player->board) < 3) {
-			// Send output board and enter coordenates (id 3)
-		} else {
-			// Send output board and confirm prompt (id 5)
-		}
-	} else {
-		char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
-		"\t- Seguir el formato para ingresar coordenadas\n"
-		"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
-		"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
-		"\t- Un barco no puede chocar con otro\n\n";
-		// Send error (id 4)
-	}
-}
-
-// Confirm ships positions. Recieves 1 or 0
-void handle_id_7(player* player, server* server, int id, int data_length, char* data) {
-	print_grid(player->board);
-	int confirm = data[0];
-	char end[] = {data[2], data[3]};
-	
-	if (confirm) {
-	  // Game phase;
-	} else {
-		restart_board(player->board);
-		char output_board[25];
-		board_to_string(player->board, output_board);
-		// Send output board and enter coordenates (id 3)
-	}
 }
