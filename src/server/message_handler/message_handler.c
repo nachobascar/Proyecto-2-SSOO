@@ -228,7 +228,7 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 	char start[] = {data[0], data[1]};
 	char end[] = {data[2], data[3]};
 	printf("Start: %s\n", start);
-	printf("End: %s\n", start);
+	printf("End: %s\n", end);
 
 	if (count_placed_ships(player->board) != 3) {
 		int status = place_ship(player->board, start, end);
