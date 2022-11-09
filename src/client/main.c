@@ -137,13 +137,13 @@ int main (int argc, char *argv[]){
     if (msg_code == 5) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf(message);
+      printf("%s\n", message);
       free(message);
     }
     if (msg_code == 6) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf(message);
+      printf("%s\n", message);
       char* response = get_input();
       // Con que id mandar esto?
       client_send_message(server_socket, 7, response);
@@ -175,11 +175,11 @@ int main (int argc, char *argv[]){
         }
       }
 
-      print_grid(grid);
+      print_grid(grid1);
       for (int i = 0; i < 5; i++){
-        free(grid[i]);
+        free(grid1[i]);
       }
-      free(grid);
+      free(grid1);
 
       // Print second grid
       printf("Tablero del oponente:\n");
@@ -206,7 +206,7 @@ int main (int argc, char *argv[]){
     if (msg_code == 8) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf(message);
+      printf("%s\n",message);
       free(message);
     }
     if (msg_code == 9) { 
