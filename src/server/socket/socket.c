@@ -64,6 +64,10 @@ void handle_package(player *player, char buffer[257], server *server) {
 		// Receive coordinates of the shot
 		handle_id_5(player, server, id, data_length, data);
 		break;
+	case 6:;
+		// Receive coordinates of the shot
+		handle_id_6(player, server, id, data_length, data);
+		break;
 
 	default:
 		break;

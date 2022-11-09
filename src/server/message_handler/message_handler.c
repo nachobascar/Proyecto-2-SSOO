@@ -217,3 +217,8 @@ void handle_id_5(player* player, server* server, int id, int data_length, char* 
 	is_your_turn(opponent, server);
 	opponent_turn(opponent->name, player->socket, server);
 }
+
+
+void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
+	printf("%s\n", data);
+}

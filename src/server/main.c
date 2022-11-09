@@ -28,15 +28,15 @@ int main(int argc, char *argv[]) {
     printf("IP address: %s\n", ip_address);
     printf("TCP port: %d\n\n", tcp_port);
 
-    // Craete player
-    player player;
-    player.board = create_board();
+    // // Craete player
+    // player player;
+    // player.board = create_board();
 
-    // Menu for placing ships
-    start_preparation(player.board);
+    // // Menu for placing ships
+    // start_preparation(player.board);
 
-    // Free board memory
-    close_board(player.board);
+    // // Free board memory
+    // close_board(player.board);
 
     // Initialize the server
     int socket_fd = create_socket(ip_address, tcp_port);

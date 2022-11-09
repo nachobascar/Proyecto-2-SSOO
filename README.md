@@ -9,8 +9,9 @@ Ids
   - 2: Petición del cliente para obtener lista de salas actualizadas
   - 3: Confirmación del cliente que está listo para jugar
   - 4: Petición del jugador de salir de la sala
-  - 5: Lista de coordenadas de las posiciones de los barcos. El payload es un arreglo de char de largo 16 con las coordenadas de inicio y fin de cada barco: [<inicio_barco_largo_2><fin_barco_largo_2><inicio_barco_largo_3><fin_barco_largo_3><inicio_barco_largo_4><fin_barco_largo_4>].
-  - 6: Confirmación de coordenadas seleccionadas.
+  - 5: Jugador dispara oponente
+  - 6: Lista de coordenadas de las posiciones de los barcos. El payload es un arreglo de char de largo 16 con las coordenadas de inicio y fin de cada barco: [<inicio_barco_largo_2><fin_barco_largo_2><inicio_barco_largo_3><fin_barco_largo_3><inicio_barco_largo_4><fin_barco_largo_4>].
+  - 7: Confirmación de coordenadas seleccionadas.
 
 
 # Documentación Mensajes de Server a Cliente
