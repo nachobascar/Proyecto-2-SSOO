@@ -17,8 +17,17 @@ Ids
 
 Ids
 
-  - 0: Recibe la lista de salas desde el server. El primer byte del buffer es 1 si la petición fue exitosa y 0 en caso contrario. Luego, el buffer está ordenado en pares de bytes, donde los primeros 4 bytes son el id de la sala, y los segundos 4 bytes son la cantidad de jugadores en ella, luego se repite hasta completar el largo del buffer.
+  - 0: Recibe la lista de salas desde el server. El primer byte del buffer es 1 si la petición fue exitosa y 0 en caso contrario. Luego, el buffer está ordenado en pares de bytes, donde el primer 1 bytes es el id de la sala, y el segundo 1 bytes es la cantidad de jugadores en ella, luego se repite hasta completar el largo del buffer.
   - 1: Responde al intento de ingreso en una sala. Si el mensaje viene vacío la sala está llena, sino, viene con el id de la sala a la que se ingresó correctamente.
-  - 2: Petición de ingresar las coordenadas de los barcos. Si se le pidió porque partió la fase de preparación del juego, el payload va vacío. Si es por algun error, hay un mensaje de error en el payload (ej: las coordenadas enviadas no son válidas, se deben enviar nuevamente).
- - 3: Confirmación de que las coordenadas son válidas. En el payload se entrega el tablero.
- - 4: 
+  - 2: Petición de ingresar las coordenadas de los barcos. Los primeros 25 bytes viene el tablero a imprimir, el siguiente byte es un entero (1 si se tiene que imprimir el menu y 0 si no), y luego el mensaje para indicar la coordenada de cual barco mandar.
+  - 3: Coordenadas no válidas, en el payload va el mensaje por error para imprimir.
+
+
+  - 4: Petición de coonfirmación de coordenadas. Los primeros 25 bytes viene el tablero a imprimir.
+  - 5: Recibe texto a imprimir.
+  - 6: Recibe texto a imprimir y envia el input.
+  - 7: Recibe 2 tableros a imprimir.
+  - 8: Juego terminado
+
+  - 9: La sala en la que el usuario ingresó se llenó, el servidor espera la confirmación de jugar o salir.
+  - 10: Alguno de los dos jugadores se salió antes de empezar el juego. Payload: 0 si es el que se salió, 1 si es que te quedarás esperando.

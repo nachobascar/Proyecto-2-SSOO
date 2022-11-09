@@ -2,7 +2,7 @@
 
 // Initialize the room
 void init_room(room* room) {
-  room->status = 0;
+  strcpy(room->status, "idle");
   room->n_players = 0;
   for (int i = 0; i < 2; i++) {
     room->players[i] = NULL;
@@ -27,9 +27,11 @@ server init_server(int socket) {
 
 // Initialize the player
 player *init_player(int socket, char* name) {
-  player* player = malloc(sizeof(player));
+  player* player = malloc(sizeof(struct player));
   player->socket = socket;
-  player->name = name;
+  player->room_id = -1;
+  player->player_id = -1;
+  strcpy(player->name, name);
   strcpy(player->status, "lobby");
   return player;
 }
