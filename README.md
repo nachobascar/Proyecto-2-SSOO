@@ -12,6 +12,7 @@ Ids
   - 5: Lista de coordenadas de las posiciones de los barcos. El payload es un arreglo de char de largo 5 con las coordenadas de inicio y fin de un barco: [<inicio_barco> <fin_barco>].
   - 6: Confirmación o no confirmación de coordenadas seleccionadas.
   - 7: Mensaje para la fase de juego.
+  - 9: Confirmación del cliente para volver al lobby una vez terminada la partida. 
 
 
 # Documentación Mensajes de Server a Cliente
