@@ -1,8 +1,23 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <signal.h>
 #include "helpers/conection.h"
 #include "helpers/comunication.h"
 #include "helpers/helpers.h"
+
+
+char IP[16];
+int PORT;
+
+// Signal handler
+void signal_handler(int signal) {
+    printf("Signal %d received, exiting...\n", signal);
+    free(IP);
+    close(PORT);
+    exit(0);
+}
+
+    
 
 char * get_input(){
   char * response = malloc(20);
@@ -19,6 +34,7 @@ char * get_input(){
 
 
 int main (int argc, char *argv[]){
+  signal(SIGINT, signal_handler);
   if (argc != 5) {
     printf("Usage: %s  -i <ip_address> -p <tcp_port>\n", argv[0]);
     exit(EXIT_FAILURE);
