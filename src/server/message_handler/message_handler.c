@@ -98,6 +98,7 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 	int room_id = data[0];
 	if (room_id >= server->rooms_size) {
 		printf("Invalid room id: %d\n", room_id);
+		send_package(player->socket, 1, 0, NULL, server);
 		return;
 	}
 
