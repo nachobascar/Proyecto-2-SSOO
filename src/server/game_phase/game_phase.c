@@ -39,6 +39,9 @@ void game_over(room* room, server* server, int winner_index) {
 	strcpy(message, "Ha ganado el jugador ");
 	strcat(message, room->players[winner_index]->name);
 	strcat(message, "!\n");
+	strcat(message, "Qué quieres hacer ahora??\n");
+	strcat(message, "\t1. Volver al lobby\n");
+	strcat(message, "\t2. Salir del juego\n");
 
 	send_package(room->players[0]->socket, GAME_FINISHED_ID, strlen(message), message, server);
 	send_package(room->players[1]->socket, GAME_FINISHED_ID, strlen(message), message, server);
