@@ -243,13 +243,12 @@ char** grid_to_send(char** grid) {
 void handle_id_5(player* player, server* server, int id, int data_length, char* data) {
 	// Verificar que el data_length sea = 5
 	print_grid(player->board);
-	char* start[2];
-	char* end[2];
+	char start[2];
+	char end[2];
 	for (int i = 0; i < 2; i++) {
 		start[i] = data[i];
 		end[i] = data[i + 3];
 	}
-	printf("Sending board to player %s (%s)\n", player->name, player->status);
 
 	int status = place_ship(player->board, start, end);
 	if (status == 0) {
