@@ -242,6 +242,9 @@ char** grid_to_send(char** grid) {
 // Place a ship. Recieves the coordenates of the ship
 void handle_id_5(player* player, server* server, int id, int data_length, char* data) {
 	// Verificar que el data_length sea = 5
+  if (player->board == NULL) {
+    return;
+  }
 	print_grid(player->board);
 	char start[2];
 	char end[2];
