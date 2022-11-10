@@ -103,7 +103,6 @@ char next_ship_length(int placed_sips) {
 // Place a ship in the board given start and end position
 // Return 0 if placed correctly, if not return -1
 int place_ship(char** board, char* start, char* end) {
-    printf("%c%c %c%c", start[0], start[1], end[0], end[1]);
     if (!check_pos(start, end)) {
         return -1;
     }

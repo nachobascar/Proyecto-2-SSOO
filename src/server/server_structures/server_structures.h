@@ -9,6 +9,7 @@ typedef struct player {
 	char name[256];
 	char status[256];
 	int room_id;
+	int disconnected;
 
 	// Indice del jugador en la sala
 	int player_id;

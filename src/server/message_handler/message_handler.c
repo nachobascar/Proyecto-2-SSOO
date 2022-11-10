@@ -9,6 +9,9 @@ void handle_id_0(player* player, server* server, int id, int data_length, char d
 	// Find if player is on active room
 	int room_id, player_id;
 	struct player* old_player = find_disconnected_player_on_room(player_name, &room_id, &player_id, server);
+
+	printf("Was player connected? %d\n", old_player != NULL);
+
 	if (old_player == NULL) {
 		// Check if name is already taken
 		int disponible = is_name_disponible(player_name, server);
@@ -38,12 +41,13 @@ void handle_id_0(player* player, server* server, int id, int data_length, char d
 			data[data_length++] = n_players;
 		}
 		send_package(player->socket, 0, data_length, data, server);
-	}
-	else {
+	} else {
 		// If the player is on active room, update the socket fd
 		strcpy(player->name, player_name);
 		player->room_id = room_id;
 		player->player_id = player_id;
+		player->board = old_player->board;
+		player->disconnected = 0;
 		// Update player on room
 		server->rooms[room_id].players[player_id] = player;
 		printf("Player %s rejoined the game\n", player_name);
@@ -51,19 +55,17 @@ void handle_id_0(player* player, server* server, int id, int data_length, char d
 		room* room = &server->rooms[room_id];
 
 		if (strcmp(room->status, "preparation") == 0) {
-			for (int i = 0; i < 2; i++) {
-				char buffer[255];
-				board_to_string(room->players[i]->board, buffer);
+			char buffer[255];
+			board_to_string(player->board, buffer);
 
-				if (strcmp(room->players[i]->status, "confirmating boats") == 0) {
-					send_package(player->socket, 4, 25, buffer, server);
-				} else {
-					char* message = "Ingresa las coordenadas de un barco\n";
-					strcpy(buffer + 25, message);
-					// Send output board and enter coordenates (id 2)
-					data_length = 25 + strlen(message) + 1;
-					send_package(player->socket, 2, data_length, buffer, server);
-				}
+			if (strcmp(player->status, "confirmating boats") == 0) {
+				send_package(player->socket, 4, 25, buffer, server);
+			} else {
+				char* message = "Ingresa las coordenadas de un barco\n";
+				strcpy(buffer + 25, message);
+				// Send output board and enter coordenates (id 2)
+				data_length = 25 + strlen(message) + 1;
+				send_package(player->socket, 2, data_length, buffer, server);
 			}
 		} else {
 			send_boards(room, server);
@@ -225,15 +227,12 @@ char** grid_to_send(char** grid) {
 void handle_id_5(player* player, server* server, int id, int data_length, char* data) {
 	// Verificar que el data_length sea = 5
 	print_grid(player->board);
-	printf("Data: %s\n", data);
 	char* start = malloc(2*sizeof(char));
 	char* end = malloc(2*sizeof(char));
 	for (int i = 0; i < 2; i++) {
 		start[i] = data[i];
 		end[i] = data[i + 3];
 	}
-	printf("Start: %c%c\n", start[0], start[1]);
-	printf("End: %c%c\n", end[0], end[1]);
 	
 
 	int status = place_ship(player->board, start, end);
@@ -265,12 +264,13 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 	print_grid(player->board);
 	char confirm = data[0];
 	
+	int room_id = player->room_id;
+	int player_id = player->player_id;
+	room* room = &server->rooms[room_id];
+
 	if (confirm == '1') {
 	  // Game phase;
 	  strcpy(player->status, "ready");
-	  int room_id = player->room_id;
-	  room* room = &server->rooms[room_id];
-	  int player_id = player->player_id;
 	  if (strcmp(room->players[!player_id]->status, "ready") == 0) {
 	    // If the other player is ready, start the game
 			strcpy(room->status, "playing");
@@ -280,9 +280,10 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 			send_boards(room, server);
 			is_your_turn(room->players[0], server);
 			opponent_turn(room->players[0]->name, room->players[1]->socket, server);
-		} else {
+		} else if (room->players[!player_id]->disconnected) {
+			send_package(player->socket, 11, 0, NULL, server);
 			return;
-		}
+		} 
 	} else {
 		restart_board(player->board);
 		// Send output board and enter coordenates (id 3)
@@ -316,9 +317,6 @@ void handle_id_7(player* player, server* server, int id, int data_length, char* 
 
 	char message[100];
 
-
-	printf("Player 0 (%d) %s\n", room->players[0]->player_id, room->players[0]->name);
-	printf("Player 1 (%d) %s\n", room->players[1]->player_id, room->players[1]->name);
 	struct player* opponent = room->players[!player->player_id];
 
 	// get boards
@@ -354,4 +352,41 @@ void handle_id_7(player* player, server* server, int id, int data_length, char* 
 	// "Change turn" message
 	is_your_turn(opponent, server);
 	opponent_turn(opponent->name, player->socket, server);
+}
+
+// Handle confirmation of player to stay waiting disconnected player
+void handle_id_8(player* player, server* server, int id, int data_length, char* data) {
+	int room_id = player->room_id;
+	room* room = &server->rooms[room_id];
+	int player_id = player->player_id;
+
+	int wants_to_wait = data[0];
+	printf("Player %s wants to wait: %d\n", player->name, wants_to_wait);
+
+	if (!wants_to_wait) {
+		game_over(room, server, player->player_id);
+
+		// Remove disconnected player from server
+		if (room->players[!player_id] != NULL && room->players[!player_id]->disconnected) {
+			close(room->players[!player_id]->socket);
+			room->players[!player_id] = NULL;
+			free(room->players[!player_id]);
+		}
+
+	}
+}
+
+// Handle confirmation of player to go to lobby or exit game
+void handle_id_9(player* player, server* server, int id, int a_data_length, char* a_data) {
+	// Send list of rooms
+	char data[255];
+	int data_length = 1;
+	data[0] = 1;
+	for (int i = 0; i < server->rooms_size; i++) {
+		int room_id = i;
+		int n_players = server->rooms[i].n_players;
+		data[data_length++] = room_id;
+		data[data_length++] = n_players;
+	}
+	send_package(player->socket, 0, data_length, data, server);
 }

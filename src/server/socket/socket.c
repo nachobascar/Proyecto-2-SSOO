@@ -38,6 +38,8 @@ void handle_package(player *player, char buffer[257], server *server) {
 	memcpy(data, &buffer[2], data_length);
 	data[data_length] = '\0';
 
+	printf("Received package from %s with id %d and data %s\n", player->name, id, data);
+
 	switch (id) {
 	case 0:;
 		// Init player. The package is the player name
@@ -72,6 +74,14 @@ void handle_package(player *player, char buffer[257], server *server) {
 		// Receive coordinates of the shot
 		handle_id_7(player, server, id, data_length, data);
 		break;
+	case 8:;
+		// Receive coordinates of the shot
+		handle_id_8(player, server, id, data_length, data);
+		break;
+	case 9:;
+		// Receive coordinates of the shot
+		handle_id_9(player, server, id, data_length, data);
+		break;
 
 	default:
 		break;
@@ -87,7 +97,6 @@ struct connection_init_args {
 // Handle the logic of a client disconnection
 void handle_client_disconnection(int client_socket_fd, server *server) {
 	// Find the player on the lobby
-	printf("Client disconnected\n");
 	player *player = find_player_on_lobby_by_socket(client_socket_fd, &(server->lobby));
 	if (player != NULL) {
 		// If the player is on the lobby, remove it
@@ -98,6 +107,10 @@ void handle_client_disconnection(int client_socket_fd, server *server) {
 		// If the player is on active room, remove it
 		player = find_player_on_room_by_socket(client_socket_fd, server);
 		if (player == NULL) {
+			return;
+		}
+
+		if (player->disconnected) {
 			return;
 		}
 
@@ -140,16 +153,19 @@ void handle_client_disconnection(int client_socket_fd, server *server) {
 		} 
 		
 		// If the room is playing, set player as disconnected
-		strcpy(player->status, "disconnected");
+		player->disconnected = 1;
 		printf("Player %s got disconnected\n", player->name);
 
-		send_package(room->players[!player->player_id]->socket, 11, 0, NULL, server);
+		if (!(strcmp(room->status, "preparation") == 0 && !strcmp(player->status, "ready") == 0)) {
+			send_package(room->players[!player->player_id]->socket, 11, 0, NULL, server);
+		}
 		close(player->socket);
 	}
 }
 
 // Handle the connection with the client
 void *handle_client(void *args) {
+	signal(SIGPIPE, SIG_IGN);
 	int client_socket_fd = ((struct connection_init_args *)args)->client_socket_fd;
 	server *server = ((struct connection_init_args *)args)->server;
 
@@ -216,6 +232,6 @@ void send_package(int client_socket_fd, int id, int data_length, char *data, ser
 		perror("Error writing to socket");
 		handle_client_disconnection(client_socket_fd, server);
 		close(client_socket_fd);
-		pthread_exit(NULL);
+		// pthread_exit(NULL);
 	}
 }

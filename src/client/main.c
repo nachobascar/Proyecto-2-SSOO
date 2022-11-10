@@ -12,7 +12,6 @@ int PORT;
 // Signal handler
 void signal_handler(int signal) {
     printf("Signal %d received, exiting...\n", signal);
-    free(IP);
     close(PORT);
     exit(0);
 }
@@ -85,8 +84,9 @@ int main (int argc, char *argv[]){
         
         char * response = get_input();
         int room = atoi(response);
-        char room_id[1];
+        char room_id[2];
         room_id[0] = room;
+        room_id[1] = '\0';
 
         client_send_message(server_socket, 1, room_id);
       }
@@ -286,10 +286,13 @@ int main (int argc, char *argv[]){
     if (msg_code == 11) {
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf("El otro jugador se ha desconectado, ¿Qué deseas hacer?\n [1] Esperar a que se reconecte\n [2] Salir de la sala\n");
-      int option = getchar() - '0';
+      printf("El otro jugador se ha desconectado, ¿Qué deseas hacer?\n [0] Esperar a que se reconecte\n [1] Salir de la sala\n");
+      int option = !(getchar() - '0');
+      char buffer[2];
+      buffer[0] = option;
+      buffer[1] = '\0';
       getchar();
-      client_send_message(server_socket, 8, option);
+      client_send_message(server_socket, 8, buffer);
       free(message);
     }
     printf("------------------\n");
@@ -297,7 +300,6 @@ int main (int argc, char *argv[]){
 
   // Se cierra el socket
   close(server_socket);
-  free(IP);
 
   return 0;
 }

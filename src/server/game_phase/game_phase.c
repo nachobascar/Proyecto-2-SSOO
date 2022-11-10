@@ -34,7 +34,17 @@ bool check_coordinates(char* coordinates, char** board) {
   manage the end of the game
 */
 void game_over(room* room, server* server, int winner_index) {
-	send_boards(room, server);
+	int players_are_connected = 1;
+	for (int i = 0; i < 2; i++) {
+		if (room->players[i] == NULL) {
+			players_are_connected = 0;
+			break;
+		}
+	}
+
+	if (players_are_connected) {
+		send_boards(room, server);
+	}
 
 	char message[100];
 	strcpy(message, "Ha ganado el jugador ");
@@ -44,15 +54,22 @@ void game_over(room* room, server* server, int winner_index) {
 	strcat(message, "\t1. Volver al lobby\n");
 	strcat(message, "\t2. Salir del juego\n");
 
-	send_package(room->players[0]->socket, GAME_FINISHED_ID, strlen(message) + 1, message, server);
-	send_package(room->players[1]->socket, GAME_FINISHED_ID, strlen(message) + 1, message, server);
-
 	for (int i = 0; i < 2; i++) {
-		room->players[i]->player_id = -1;
-		room->players[i]->room_id = -1;
-		strcpy(room->players[i]->status, "lobby");
-		add_player_to_lobby(room->players[i], &server->lobby);
-		server->lobby_size++;
+		if (room->players[i] == NULL) {
+			continue;
+		}
+		close_board(room->players[i]->board);
+		if (!room->players[i]->disconnected) {
+			room->players[i]->player_id = -1;
+			room->players[i]->room_id = -1;
+			send_package(room->players[i]->socket, GAME_FINISHED_ID, strlen(message) + 1, message, server);
+			strcpy(room->players[i]->status, "lobby");
+			add_player_to_lobby(room->players[i], &server->lobby);
+			server->lobby_size++;
+		} else {
+			free(room->players[i]);
+		}
+
 		room->players[i] = NULL;
 	}
 	room->n_players = 0;

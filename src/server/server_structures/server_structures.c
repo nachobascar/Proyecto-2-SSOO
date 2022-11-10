@@ -31,6 +31,7 @@ player *init_player(int socket, char* name) {
   player->socket = socket;
   player->room_id = -1;
   player->player_id = -1;
+  player->disconnected = 0;
   strcpy(player->name, name);
   strcpy(player->status, "lobby");
   return player;
@@ -109,12 +110,12 @@ player* find_disconnected_player_on_room(char* name, int* room_id, int* player_i
   for (int i = 0; i < server->rooms_size; i++) {
     room* room = &server->rooms[i];
     if (room->n_players == 2) {
-      if (strcmp(room->players[0]->name, name) == 0 && strcmp(room->players[0]->status, "disconnected") == 0) {
+      if (strcmp(room->players[0]->name, name) == 0 && room->players[0]->disconnected) {
         *room_id = i;
         *player_id = 0;
         return room->players[0];
       }
-      if (strcmp(room->players[1]->name, name) == 0 && strcmp(room->players[0]->status, "disconnected") == 0) {
+      if (strcmp(room->players[1]->name, name) == 0 && room->players[1]->disconnected) {
         *room_id = i;
         *player_id = 1;
         return room->players[1];
