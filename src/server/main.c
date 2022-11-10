@@ -1,6 +1,8 @@
 #include <stdio.h>
 
 #include "socket/socket.h"
+#include "preparation/preparation.h"
+#include "server_structures/server_structures.h"
 
 int main(int argc, char *argv[]) {
     printf("Hello, World! Im the server\n\n");
@@ -26,11 +28,20 @@ int main(int argc, char *argv[]) {
     printf("IP address: %s\n", ip_address);
     printf("TCP port: %d\n\n", tcp_port);
 
+    // // Craete player
+    // player player;
+    // player.board = create_board();
+
+    // // Menu for placing ships
+    // start_preparation(player.board);
+
+    // // Free board memory
+    // close_board(player.board);
+
     // Initialize the server
     int socket_fd = create_socket(ip_address, tcp_port);
     server server = init_server(socket_fd);
     printf("Socket created\n");
-
 
     // Listen for connections
     accept_connections(socket_fd, &server);

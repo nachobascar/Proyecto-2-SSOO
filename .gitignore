@@ -58,3 +58,6 @@ server
 
 obj/
 .vscode/
+
+# OS generated file
+.DS_Store
