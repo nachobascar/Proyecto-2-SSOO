@@ -246,6 +246,16 @@ int main (int argc, char *argv[]){
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
       printf("%s\n",message);
+      char* response = get_input();
+      if (response[0] == '1'){
+        client_send_message(server_socket, 9, response);
+      }
+      else{
+        // Close program
+        free(message);
+        free(response);
+        break;
+      }
       free(message);
     }
     if (msg_code == 9) { 
