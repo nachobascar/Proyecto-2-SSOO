@@ -14,6 +14,8 @@ char * client_receive_payload(int client_socket, int* payload_size){
   *payload_size = payload_s[0];
   if (*payload_size == 0){
     return NULL;
+  } else if (*payload_size < 0){
+    *payload_size = 256 + *payload_size;
   }
   // Se obtiene el payload
   char * payload = malloc(*payload_size);

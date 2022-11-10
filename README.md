@@ -29,6 +29,7 @@
   - 9: La sala en la que el usuario ingresó se llenó, el servidor espera la confirmación de jugar o salir.
   - 10: Alguno de los dos jugadores se salió antes de empezar el juego. Payload: 0 si es el que se salió, 1 si es que te quedarás esperando.
   - 11: El otro jugador ha salido de la partida, el servidor espera si desea esperarlo o no.
+  - 20: Recibir imagen por haber ganado.
 
 
 ## Consideraciones adicionales:
@@ -42,5 +43,6 @@
     - El oponente tiene la opción de seguir jugando o ganar la partida, y esta opción la puede tomar incluso si el jugador ya se reconectó, lo que le otorga al oponente un tiempo de 1 turno para tomar esta desición.
   - El manejo de control de input es limitado, por lo que se espera que el jugador cumpla con los formatos informados en los mensajes. Es por esto que asumimos (por la información del enunciado) que un manejo exhaustivo sobre los inputs otorgados va más allá de los objetivos de esta tarea. Es decir, que si el programa se cae por un input mal entregado por parte del cliente no se considera un error ya que queda el alcance limitado en ese ámbito.
   - Al jugar, se agrega un comando "bomb" que permite ganar la partida inmediatamente, un hack que permite explotar el tablero del oponente (Necesario para el debugueo).
+  - Se incluyó también el bonus de la imagen. Al ganar, se le descarga al jugador una imagen de recompensa en su directorio de ejecución.
 
 

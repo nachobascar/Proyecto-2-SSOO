@@ -302,6 +302,40 @@ int main (int argc, char *argv[]){
       client_send_message(server_socket, 8, buffer);
       free(message);
     }
+
+    if (msg_code == 20) {
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      int size, n_blocks;
+      char name[50];
+      sscanf(message, "%d %d %s", &size, &n_blocks, name);
+
+      char **data = malloc(n_blocks * sizeof(char*));
+      int *block_size = malloc(n_blocks * sizeof(int));
+      for (int i = 0; i < n_blocks; i++){
+        data[i] = NULL;
+      }
+
+      int n_recieved = 0;
+
+      while(n_recieved < n_blocks){
+        int id = client_receive_id(server_socket);
+        int payload_size;
+        data[id] = client_receive_payload(server_socket, &payload_size);
+        block_size[id] = payload_size;
+        n_recieved++;
+      }
+
+      FILE *file = fopen(name, "wb");
+      for (int i = 0; i < n_blocks; i++){
+        fwrite(data[i], sizeof(char), block_size[i], file);
+        free(data[i]);
+      }
+      free(block_size);
+      free(data);
+
+      free(message);
+    }
     printf("------------------\n");
   }
 

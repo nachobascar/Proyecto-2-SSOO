@@ -30,6 +30,36 @@ bool check_coordinates(char* coordinates, char** board) {
 	return true;
 }
 
+int send_winning_image(player* player, server* server) {
+	FILE* img = fopen("img.jpeg", "r");
+	if (img == NULL) {
+		printf("Error opening file");
+		return 0;
+	}
+
+	fseek(img, 0, SEEK_END);
+	int size = ftell(img);
+	fseek(img, 0, SEEK_SET);
+	char *buffer = malloc(size);
+	fread(buffer, 1, size, img);
+	fclose(img);
+
+	char message[255];
+	sprintf(message, "%d %d congratulations.jpeg", size, (size - 1) / 255 + 1);
+	send_package(player->socket, 20, strlen(message) + 1, message, server);
+
+	int id = 0;
+	for (int i = 0; i < size; i += 255) {
+		int size_to_send = 255;
+		if (i + 255 > size) {
+			size_to_send = size - i;
+		}
+		char aux_buffer[255];
+		send_package(player->socket, id++, size_to_send , buffer + i, server);
+	}
+	return 1;
+}
+
 /*
   manage the end of the game
 */
@@ -45,6 +75,8 @@ void game_over(room* room, server* server, int winner_index) {
 	if (players_are_connected) {
 		send_boards(room, server);
 	}
+
+	send_winning_image(room->players[winner_index], server);
 
 	char message[100];
 	strcpy(message, "Ha ganado el jugador ");
