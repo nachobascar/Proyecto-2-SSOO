@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 typedef struct player {
 	int socket;
@@ -41,6 +44,9 @@ typedef struct server {
 
 	room rooms[10];
 	int rooms_size;
+
+	pthread_t* threads;
+	int threads_size;
 } server;
 
 // Create and initialize the server

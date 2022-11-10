@@ -212,8 +212,8 @@ int accept_connections(int socket_fd, server *server) {
 		args.server = server;
 
 		// Start thread for client
-		pthread_t thread;
-		pthread_create(&thread, NULL, handle_client, (void *)&args);
+		server->threads = realloc(server->threads, (server->threads_size + 1) * sizeof(pthread_t));
+		pthread_create(&server->threads[server->threads_size++], NULL, handle_client, (void *)&args);
 	}
 }
 

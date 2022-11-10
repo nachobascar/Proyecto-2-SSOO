@@ -215,6 +215,9 @@ void start_preparation(char** board) {
 
 // Free board memory
 void close_board(char** board) {
+    if (board == NULL) {
+        return;
+    }
     for (int i = 0; i < 5; i++) {
         free(board[i]);
     }

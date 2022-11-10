@@ -59,6 +59,7 @@ void game_over(room* room, server* server, int winner_index) {
 			continue;
 		}
 		close_board(room->players[i]->board);
+		room->players[i]->board = NULL;
 		if (!room->players[i]->disconnected) {
 			room->players[i]->player_id = -1;
 			room->players[i]->room_id = -1;

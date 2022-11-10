@@ -44,6 +44,7 @@ void handle_id_0(player* player, server* server, int id, int data_length, char d
 	} else {
 		// If the player is on active room, update the socket fd
 		strcpy(player->name, player_name);
+		strcpy(player->status, old_player->status);
 		player->room_id = room_id;
 		player->player_id = player_id;
 		player->board = old_player->board;
@@ -58,8 +59,23 @@ void handle_id_0(player* player, server* server, int id, int data_length, char d
 			char buffer[255];
 			board_to_string(player->board, buffer);
 
+			printf("Sending board to player %s (%s)\n", player->name, player->status);
 			if (strcmp(player->status, "confirmating boats") == 0) {
 				send_package(player->socket, 4, 25, buffer, server);
+			} else if(strcmp(player->status, "ready") == 0) {
+				if (strcmp(room->players[!player_id]->status, "ready") == 0) {
+					// If the other player is ready, start the game
+					strcpy(room->status, "playing");
+					for (int i = 0; i < 2; i++) {
+						strcpy(room->players[i]->status, "playing");
+					}
+					send_boards(room, server);
+					is_your_turn(room->players[0], server);
+					opponent_turn(room->players[0]->name, room->players[1]->socket, server);
+				} else {
+					// If the other player is not ready, send the board to the player
+					send_package(player->socket, 4, 25, buffer, server);
+				}
 			} else {
 				char* message = "Ingresa las coordenadas de un barco\n";
 				strcpy(buffer + 25, message);
@@ -227,13 +243,13 @@ char** grid_to_send(char** grid) {
 void handle_id_5(player* player, server* server, int id, int data_length, char* data) {
 	// Verificar que el data_length sea = 5
 	print_grid(player->board);
-	char* start = malloc(2*sizeof(char));
-	char* end = malloc(2*sizeof(char));
+	char* start[2];
+	char* end[2];
 	for (int i = 0; i < 2; i++) {
 		start[i] = data[i];
 		end[i] = data[i + 3];
 	}
-	
+	printf("Sending board to player %s (%s)\n", player->name, player->status);
 
 	int status = place_ship(player->board, start, end);
 	if (status == 0) {
@@ -248,7 +264,7 @@ void handle_id_5(player* player, server* server, int id, int data_length, char* 
 			send_package(player->socket, 2, data_length, buffer, server);
 		} else {
 			// Send output board and confirm prompt (id 4)
-			strcmp(player->status, "confirmating boats");
+			strcpy(player->status, "confirmating boats");
 			data_length = 25;
 			send_package(player->socket, 4, data_length, buffer, server);
 		}
@@ -285,6 +301,7 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 			return;
 		} 
 	} else {
+		strcpy(player->status, "boat 2");
 		restart_board(player->board);
 		// Send output board and enter coordenates (id 3)
 		char* message = "Seleccione la posición del barco de tamaño 2\n";

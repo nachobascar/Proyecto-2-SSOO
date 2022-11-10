@@ -22,6 +22,9 @@ server init_server(int socket) {
     init_room(&server.rooms[i]);
   }
   server.rooms_size = 10;
+
+  server.threads = NULL;
+  server.threads_size = 0;
   return server;
 }
 
@@ -32,6 +35,7 @@ player *init_player(int socket, char* name) {
   player->room_id = -1;
   player->player_id = -1;
   player->disconnected = 0;
+  player->board = NULL;
   strcpy(player->name, name);
   strcpy(player->status, "lobby");
   return player;
