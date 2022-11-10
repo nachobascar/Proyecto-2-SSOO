@@ -199,52 +199,89 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 	printf("\n");
 }
 
+
+char** grid_to_send(char** grid) {
+	
+	char** new_grid = create_board();
+
+	for (int i=0; i < 5; i ++){
+		for (int j=0; j < 5; j ++) {
+			if ((grid[i][j] == '2') || (grid[i][j] == '3') || (grid[i][j] == '4')) {
+				new_grid[i][j] = 'O';
+			}
+		}
+	}
+	return new_grid;
+}
+
 // Place a ship. Recieves the coordenates of the ship
 void handle_id_5(player* player, server* server, int id, int data_length, char* data) {
+	// Verificar que el data_length sea = 5
 	print_grid(player->board);
 	printf("Data: %s\n", data);
-	char start[] = {data[0], data[1]};
-	char end[] = {data[2], data[3]};
+	char* start = malloc(2*sizeof(char));
+	char* end = malloc(2*sizeof(char));
+	for (int i = 0; i < 2; i++) {
+		start[i] = data[i];
+		end[i] = data[i + 3];
+	}
 	printf("Start: %c%c\n", start[0], start[1]);
 	printf("End: %c%c\n", end[0], end[1]);
+	
 
 	int status = place_ship(player->board, start, end);
 	if (status == 0) {
 		char buffer[255];
-		board_to_string(player->board, buffer);
-		char* message = "Ingresa las coordenadas de un barco";
+		char** grid = grid_to_send(player->board);
+		board_to_string(grid, buffer);
+		char* message = "Ingresa las coordenadas de un barco\n";
 		strcpy(buffer + 25, message);
 		if (count_placed_ships(player->board) < 3) {
-			// Send output board and enter coordenates (id 3)
-			char* message = "Ingresa las coordenadas de un barco";
-		  strcpy(buffer + 25, message);
+			// Send output board and enter coordenates (id 2)
 			data_length = 25 + strlen(message) + 1;
-			send_package(player->socket, 3, data_length, buffer, server);
+			send_package(player->socket, 2, data_length, buffer, server);
 		} else {
-			// Send output board and confirm prompt (id 5)
+			// Send output board and confirm prompt (id 4)
+			data_length = 25;
+			send_package(player->socket, 4, data_length, buffer, server);
 		}
+		close_board(grid);
 	} else {
-		char* error_msg = "Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
-		"\t- Seguir el formato para ingresar coordenadas\n"
-		"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
-		"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
-		"\t- Un barco no puede chocar con otro\n\n";
-		// Send error (id 4)
+		send_package(player->socket, 3, 0, NULL, server);
+		// Send error (id 3)
 	}
 }
 
 // Confirm ships positions. Recieves 1 or 0
 void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
 	print_grid(player->board);
-	int confirm = data[0];
+	char confirm = data[0];
 	
-	if (confirm) {
+	if (confirm == '1') {
 	  // Game phase;
+	  strcpy(player->status, "ready");
+	  int room_id = player->room_id;
+	  room* room = &server->rooms[room_id];
+	  int player_id = player->player_id;
+	  if (strcmp(room->players[!player_id]->status, "ready") == 0) {
+	    // If the other player is ready, start the game
+		send_boards(room, room->players[0]->board, room->players[1]->board, server);
+		is_your_turn(room->players[0], server);
+		opponent_turn(room->players[0]->name, room->players[1]->socket, server);
+	    } else {
+			return;
+		}
 	} else {
 		restart_board(player->board);
-		char output_board[25];
-		board_to_string(player->board, output_board);
 		// Send output board and enter coordenates (id 3)
+		char* message = "Seleccione la posición del barco de tamaño 2\n";
+		char buffer[255];
+		for (int i = 0; i < 25; i++) {
+			buffer[i] = ' ';
+		}
+		buffer[25] = 1;
+		strcpy(buffer + 26, message);
+		send_package(player->socket, 2, 26 + strlen(message) + 1, buffer, server);
 	}
 }
 

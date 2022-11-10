@@ -20,24 +20,20 @@ int count_placed_ships(char** board) {
     int placed_ships = 0;
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
-            if (board[i][j] == 'O') {
+            if ((board[i][j] == '2') || (board[i][j] == '3') || (board[i][j] == '4')) {
                 o_count++;
             }
         }
     }
 
-    switch (o_count) {
-        case 2:
-            placed_ships = 1;
-            break;
-        case 5:
-            placed_ships = 2;
-            break;
-        case 9:
-            placed_ships = 3;
-            break;
-        default:
-            break;
+    if (o_count < 2) {
+        placed_ships = 0;
+    } else if (o_count < 5) {
+        placed_ships = 1;
+    } else if (o_count < 9) {
+        placed_ships = 2;
+    } else {
+        placed_ships = 3;
     }
     return placed_ships;
 }
@@ -65,9 +61,6 @@ void sort_range(int* range) {
 
 // Check position format and range
 int check_pos(char* start, char* end) {
-    if (strlen(start) != 2 || strlen(end) != 2) {
-        return 0;
-    }
     if (!((start[0] >= 'A' && start[0] <= 'E') || (start[0] >= 'a' && start[0] <= 'e'))
         || !((end[0] >= 'A' && end[0] <= 'E') || (end[0] >= 'a' && end[0] <= 'e'))) {
         return 0;
@@ -110,6 +103,7 @@ char next_ship_length(int placed_sips) {
 // Place a ship in the board given start and end position
 // Return 0 if placed correctly, if not return -1
 int place_ship(char** board, char* start, char* end) {
+    printf("%c%c %c%c", start[0], start[1], end[0], end[1]);
     if (!check_pos(start, end)) {
         return -1;
     }

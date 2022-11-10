@@ -203,7 +203,12 @@ void opponent_board(char** board, char* output_board) {
 void board_to_string(char** board, char* output_board) {
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
-			output_board[i * 5 + j] = board[i][j];
+			if (board[i][j] == '2' || board[i][j] == '3' || board[i][j] == '4') {
+				output_board[i * 5 + j] = 'O';
+			}
+			else {
+				output_board[i * 5 + j] = board[i][j];
+			}
 		}
 	}
 }

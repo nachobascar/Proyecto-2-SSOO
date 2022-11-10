@@ -45,12 +45,7 @@ int main (int argc, char *argv[]){
   printf("Bienvenido! Ingrese su nombre de usuario: \n");
   char * username = get_input();
 
-  // Prueba fase de preparacion
   client_send_message(server_socket, 0, username);
-  while (1) {
-    char * username = get_input();
-    client_send_message(server_socket, 6, username);
-  }
 
   // Se inicializa un loop para recibir todo tipo de paquetes y tomar una acción al respecto
   while (1){
@@ -129,15 +124,39 @@ int main (int argc, char *argv[]){
     if (msg_code == 3) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf("%s", message);
+      printf("Las coordenadas ingresadas son inválidas. Recuerda lo siguiente\n"
+		"\t- Seguir el formato para ingresar coordenadas\n"
+		"\t- Los barcos solo pueden estar horizontal o verticalmente\n"
+		"\t- Primero debes ingresar un barco de largo 2, luego 3 y luego 4\n"
+		"\t- Un barco no puede chocar con otro\n\n");
+      printf("Ingrese las coordenadas de sus barcos nuevamente\n");
       char* response = get_input();
       client_send_message(server_socket, 5, response);
     }
     if (msg_code == 4) { 
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
-      printf("Esperando a que el otro jugador coloque sus barcos\n");
-      free(message);
+      
+      char ** grid = malloc(5*sizeof(char*));
+      for (int i = 0; i < 5; i++){
+        grid[i] = malloc(5*sizeof(char));
+      }
+      for (int i = 0; i < 5; i++){
+        for (int j = 0; j < 5; j++){
+          grid[i][j] = message[i*5 + j];
+        }
+      }
+
+      print_grid(grid);
+      for (int i = 0; i < 5; i++){
+        free(grid[i]);
+      }
+      free(grid);
+      printf("¿Estás segur@ que desas continuar?\n"
+                "[0] No\n"
+                "[1] Sí\n");
+      char* response = get_input();
+      client_send_message(server_socket, 6, response);
     }
     if (msg_code == 5) { 
       int payload_size;
@@ -150,7 +169,6 @@ int main (int argc, char *argv[]){
       char * message = client_receive_payload(server_socket, &payload_size);
       printf("%s\n", message);
       char* response = get_input();
-      // Con que id mandar esto?
       client_send_message(server_socket, 7, response);
     }
     if (msg_code == 7) { 
