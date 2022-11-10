@@ -42,7 +42,6 @@
     - El jugador puede volver a conectarse con su nombre de usuario, si estaba en fase de preparación se retoma desde donde la dejó, si yá tenía el tablero confirmado se le pide una reconfirmación de los barcos, y si entra en etapa de juego entonces retoma su turno de forma normal.
     - El oponente tiene la opción de seguir jugando o ganar la partida, y esta opción la puede tomar incluso si el jugador ya se reconectó, lo que le otorga al oponente un tiempo de 1 turno para tomar esta desición.
   - El manejo de control de input es limitado, por lo que se espera que el jugador cumpla con los formatos informados en los mensajes. Es por esto que asumimos (por la información del enunciado) que un manejo exhaustivo sobre los inputs otorgados va más allá de los objetivos de esta tarea. Es decir, que si el programa se cae por un input mal entregado por parte del cliente no se considera un error ya que queda el alcance limitado en ese ámbito.
-  - Al jugar, se agrega un comando "bomb" que permite ganar la partida inmediatamente, un hack que permite explotar el tablero del oponente (Necesario para el debugueo).
   - Se incluyó también el bonus de la imagen. Al ganar, se le descarga al jugador una imagen de recompensa en su directorio de ejecución.
-
+  - Se agrega el comando secreto ```bomb``` que puede ser ingresado en vez de una coordenada durante la etapa de juego y permite ganar la partida inmediatamente (fue utilizado para debuguear más rápido).
 
