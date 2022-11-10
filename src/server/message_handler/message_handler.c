@@ -94,6 +94,7 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 				strcpy(room->players[i]->status, "pending confirmation");
 				// Tell the players that the game is starting
 				send_package(room->players[i]->socket, 9, 0, NULL, server);
+				room->players[i]->board = create_board();
 			}
 		}
 	}
@@ -172,19 +173,25 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 
 // Place a ship. Recieves the coordenates of the ship
 void handle_id_5(player* player, server* server, int id, int data_length, char* data) {
-	// player->board = create_board();
 	print_grid(player->board);
+	printf("Data: %s\n", data);
 	char start[] = {data[0], data[1]};
 	char end[] = {data[2], data[3]};
-	printf("Start: %s\n", start);
-	printf("End: %s\n", end);
+	printf("Start: %c%c\n", start[0], start[1]);
+	printf("End: %c%c\n", end[0], end[1]);
 
 	int status = place_ship(player->board, start, end);
 	if (status == 0) {
-		char output_board[25];
-		board_to_string(player->board, output_board);
+		char buffer[255];
+		board_to_string(player->board, buffer);
+		char* message = "Ingresa las coordenadas de un barco";
+		strcpy(buffer + 25, message);
 		if (count_placed_ships(player->board) < 3) {
 			// Send output board and enter coordenates (id 3)
+			char* message = "Ingresa las coordenadas de un barco";
+		  strcpy(buffer + 25, message);
+			data_length = 25 + strlen(message) + 1;
+			send_package(player->socket, 3, data_length, buffer, server);
 		} else {
 			// Send output board and confirm prompt (id 5)
 		}
