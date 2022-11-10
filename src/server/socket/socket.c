@@ -107,6 +107,7 @@ void handle_client_disconnection(int client_socket_fd, server *server) {
 		// If the player is on active room, remove it
 		player = find_player_on_room_by_socket(client_socket_fd, server);
 		if (player == NULL) {
+			printf("Player not found\n");
 			return;
 		}
 
@@ -115,7 +116,7 @@ void handle_client_disconnection(int client_socket_fd, server *server) {
 		}
 
 		room* room = &server->rooms[player->room_id];
-
+		
 		if (strcmp(room->status, "waiting") == 0) {
 			// If the room is waiting, remove the player
 			room->players[0] = room->players[!player->player_id];

@@ -122,6 +122,7 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 		room->players[player_id] = player;
 		room->n_players++;
 		strcpy(player->status, "waiting");
+    strcpy(room->status, "waiting");
 
 		// Remove the player from the lobby
 		remove_player_from_lobby(player, &server->lobby);

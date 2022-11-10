@@ -80,10 +80,17 @@ int main (int argc, char *argv[]){
           printf("Sala %i: %i/%i jugadores  \n", message[i], message[i+1], 2);
         }
 
-        printf("¿A qué sala desea entrar?\n");
+        printf("¿A qué sala desea entrar? ('x' para actualizar salas)\n");
         
         char * response = get_input();
+        if (response[0] == 'x') {
+          client_send_message(server_socket, 2, "");
+          continue;;
+        }
+
         int room = atoi(response);
+
+
         char room_id[2];
         room_id[0] = room;
         room_id[1] = '\0';
