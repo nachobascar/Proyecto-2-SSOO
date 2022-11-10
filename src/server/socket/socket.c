@@ -156,7 +156,7 @@ void handle_client_disconnection(int client_socket_fd, server *server) {
 		player->disconnected = 1;
 		printf("Player %s got disconnected\n", player->name);
 
-		if (!(strcmp(room->status, "preparation") == 0 && !strcmp(player->status, "ready") == 0)) {
+		if (!(strcmp(room->status, "preparation") == 0 && strcmp(room->players[!player->player_id]->status, "ready") != 0)) {
 			send_package(room->players[!player->player_id]->socket, 11, 0, NULL, server);
 		}
 		close(player->socket);
