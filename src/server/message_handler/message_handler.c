@@ -94,7 +94,6 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 				strcpy(room->players[i]->status, "pending confirmation");
 				// Tell the players that the game is starting
 				send_package(room->players[i]->socket, 9, 0, NULL, server);
-				room->players[i]->board = create_board();
 			}
 		}
 	}
@@ -140,6 +139,7 @@ void handle_id_3(player* player, server* server, int id, int aux_data_length, ch
 		for (int i = 0; i < 2; i++) {
 			send_package(room->players[i]->socket, 2, 27 + strlen(message), buffer, server);
 			strcpy(room->players[i]->status, "boat 2");
+			room->players[i]->board = create_board();
 		}
 	}
 }
