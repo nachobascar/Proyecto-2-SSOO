@@ -46,6 +46,17 @@ void game_over(room* room, server* server, int winner_index) {
 
 	send_package(room->players[0]->socket, GAME_FINISHED_ID, strlen(message) + 1, message, server);
 	send_package(room->players[1]->socket, GAME_FINISHED_ID, strlen(message) + 1, message, server);
+
+	for (int i = 0; i < 2; i++) {
+		room->players[i]->player_id = -1;
+		room->players[i]->room_id = -1;
+		strcpy(room->players[i]->status, "lobby");
+		add_player_to_lobby(room->players[i], &server->lobby);
+		server->lobby_size++;
+		room->players[i] = NULL;
+	}
+	room->n_players = 0;
+	strcpy(room->status, "waiting");
 	return;
 }
 

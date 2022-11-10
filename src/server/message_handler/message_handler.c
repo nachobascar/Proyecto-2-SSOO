@@ -42,12 +42,35 @@ void handle_id_0(player* player, server* server, int id, int data_length, char d
 	else {
 		// If the player is on active room, update the socket fd
 		strcpy(player->name, player_name);
-		strcpy(player->status, "playing");
 		player->room_id = room_id;
 		player->player_id = player_id;
 		// Update player on room
 		server->rooms[room_id].players[player_id] = player;
 		printf("Player %s rejoined the game\n", player_name);
+		
+		room* room = &server->rooms[room_id];
+
+		if (strcmp(room->status, "preparation") == 0) {
+			for (int i = 0; i < 2; i++) {
+				char buffer[255];
+				board_to_string(room->players[i]->board, buffer);
+
+				if (strcmp(room->players[i]->status, "confirmating boats") == 0) {
+					send_package(player->socket, 4, 25, buffer, server);
+				} else {
+					char* message = "Ingresa las coordenadas de un barco\n";
+					strcpy(buffer + 25, message);
+					// Send output board and enter coordenates (id 2)
+					data_length = 25 + strlen(message) + 1;
+					send_package(player->socket, 2, data_length, buffer, server);
+				}
+			}
+		} else {
+			send_boards(room, server);
+			is_your_turn(player, server);
+		}
+		
+		strcpy(player->status, "playing");
 		free(old_player);
 	}
 }
@@ -90,6 +113,7 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 
 		if (room->n_players == 2) {
 			// If the room is full, start the game
+			strcpy(room->status, "pending confirmation");
 			for (int i = 0; i < 2; i++) {
 				strcpy(room->players[i]->status, "pending confirmation");
 				// Tell the players that the game is starting
@@ -122,6 +146,7 @@ void handle_id_3(player* player, server* server, int id, int aux_data_length, ch
 
 	if (room->n_players < 2) {
 		// If the other player left, send error
+		strcpy(room->status, "waiting");
 		strcpy(player->status, "waiting");
 		char message[1];
 		message[0] = 1;
@@ -129,6 +154,7 @@ void handle_id_3(player* player, server* server, int id, int aux_data_length, ch
 	}
 	else if (room->players[!player->player_id] != NULL && strcmp(room->players[!player->player_id]->status, "confirmed") == 0) {
 		// If the other player is confirmed, start the game
+		strcpy(room->status, "preparation");
 		char* message = "Seleccione la posición del barco de tamaño 2\n";
 		char buffer[255];
 		for (int i = 0; i < 25; i++) {
@@ -161,6 +187,7 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 	char message[1];
 	message[0] = 0;
 	send_package(player->socket, 10, 1, message, server);
+	strcpy(room->status, "waiting");
 
 	if (room->players[!player_id] != NULL && strcmp(room->players[!player_id]->status, "confirmed") == 0) {
 		// If the other player is still in the room, tell him that the other player left
@@ -222,6 +249,7 @@ void handle_id_5(player* player, server* server, int id, int data_length, char* 
 			send_package(player->socket, 2, data_length, buffer, server);
 		} else {
 			// Send output board and confirm prompt (id 4)
+			strcmp(player->status, "confirmating boats");
 			data_length = 25;
 			send_package(player->socket, 4, data_length, buffer, server);
 		}
@@ -245,10 +273,14 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 	  int player_id = player->player_id;
 	  if (strcmp(room->players[!player_id]->status, "ready") == 0) {
 	    // If the other player is ready, start the game
-		send_boards(room, server);
-		is_your_turn(room->players[0], server);
-		opponent_turn(room->players[0]->name, room->players[1]->socket, server);
-	    } else {
+			strcpy(room->status, "playing");
+			for (int i = 0; i < 2; i++) {
+				strcpy(room->players[i]->status, "playing");
+			}
+			send_boards(room, server);
+			is_your_turn(room->players[0], server);
+			opponent_turn(room->players[0]->name, room->players[1]->socket, server);
+		} else {
 			return;
 		}
 	} else {

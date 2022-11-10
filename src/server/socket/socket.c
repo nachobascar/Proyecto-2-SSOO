@@ -94,14 +94,57 @@ void handle_client_disconnection(int client_socket_fd, server *server) {
 		remove_player_from_lobby(player, &server->lobby);
 		printf("Player %s left the lobby\n", player->name);
 		free(player);
-	}
-	else {
+	} else {
 		// If the player is on active room, remove it
 		player = find_player_on_room_by_socket(client_socket_fd, server);
-		if (player != NULL) {
-			strcpy(player->status, "disconnected");
-			printf("Player %s got disconnected\n", player->name);
+		if (player == NULL) {
+			return;
 		}
+
+		room* room = &server->rooms[player->room_id];
+
+		if (strcmp(room->status, "waiting") == 0) {
+			// If the room is waiting, remove the player
+			room->players[0] = room->players[!player->player_id];
+			if (room->players[0] != NULL) {
+				room->players[0]->player_id = 0;
+			}
+			room->players[1] = NULL;
+			room->n_players--;
+
+			printf("Player %s left the room %d\n", player->name, player->room_id);
+			close(player->socket);
+			free(player);
+			return;
+		} 
+		
+		if (strcmp(room->status, "pending confirmation") == 0) {
+			// If the room is pending confirmation, remove player and tell the other player
+			strcpy(room->status, "waiting");
+
+			room->players[0] = room->players[!player->player_id];
+			room->players[0]->player_id = 0;
+
+			room->players[1] = NULL;
+			room->n_players--;
+
+			printf("Player %s left the room %d\n", player->name, player->room_id);
+
+			char message[1];
+			message[0] = 1;
+			send_package(room->players[0]->socket, 10, 1, message, server);
+			strcpy(room->players[0]->status, "waiting");
+			close(player->socket);
+			free(player);
+			return;
+		} 
+		
+		// If the room is playing, set player as disconnected
+		strcpy(player->status, "disconnected");
+		printf("Player %s got disconnected\n", player->name);
+
+		send_package(room->players[!player->player_id]->socket, 11, 0, NULL, server);
+		close(player->socket);
 	}
 }
 
