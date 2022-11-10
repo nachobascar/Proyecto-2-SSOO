@@ -257,6 +257,15 @@ int main (int argc, char *argv[]){
 
       free(message);
     }
+    if (msg_code == 11) {
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      printf("El otro jugador se ha desconectado, ¿Qué deseas hacer?\n [1] Esperar a que se reconecte\n [2] Salir de la sala\n");
+      int option = getchar() - '0';
+      getchar();
+      client_send_message(server_socket, 8, option);
+      free(message);
+    }
     printf("------------------\n");
   }
 

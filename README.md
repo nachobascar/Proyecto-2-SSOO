@@ -12,6 +12,7 @@ Ids
   - 5: Lista de coordenadas de las posiciones de los barcos. El payload es un arreglo de char de largo 5 con las coordenadas de inicio y fin de un barco: [<inicio_barco> <fin_barco>].
   - 6: Confirmación o no confirmación de coordenadas seleccionadas.
   - 7: Mensaje para la fase de juego.
+  - 8: Respuesta a si quiere esperar o no al jugador que se desconectó. El payload será un 1 si desea esperarlo y un 0 si desea salir de la sala.
 
 
 # Documentación Mensajes de Server a Cliente
@@ -32,3 +33,4 @@ Ids
 
   - 9: La sala en la que el usuario ingresó se llenó, el servidor espera la confirmación de jugar o salir.
   - 10: Alguno de los dos jugadores se salió antes de empezar el juego. Payload: 0 si es el que se salió, 1 si es que te quedarás esperando.
+  - 11: El otro jugador ha salido de la partida, el servidor espera si desea esperarlo o no.
