@@ -1,5 +1,8 @@
 #include "game_phase.h"
 
+#include <string.h>
+#include <stdio.h>
+#include <ctype.h>
 /*
   check if the given coordinates are valid ( non used && in the board )
   input:
@@ -7,10 +10,8 @@
     board: grid of chars
 */
 bool check_coordinates(char* coordinates, char** board) {
-	if (strlen(coordinates) != 2) {
-		return false;
-	}
-
+	coordinates[0] = toupper(coordinates[0]);
+	
 	if (coordinates[0] < 'A' || coordinates[0] > 'E') {
 		return false;
 	}
@@ -33,7 +34,7 @@ bool check_coordinates(char* coordinates, char** board) {
   manage the end of the game
 */
 void game_over(room* room, server* server, int winner_index) {
-	send_boards(room, room->players[0]->board, room->players[1]->board, server);
+	send_boards(room, server);
 
 	char message[100];
 	strcpy(message, "Ha ganado el jugador ");
@@ -43,8 +44,8 @@ void game_over(room* room, server* server, int winner_index) {
 	strcat(message, "\t1. Volver al lobby\n");
 	strcat(message, "\t2. Salir del juego\n");
 
-	send_package(room->players[0]->socket, GAME_FINISHED_ID, strlen(message), message, server);
-	send_package(room->players[1]->socket, GAME_FINISHED_ID, strlen(message), message, server);
+	send_package(room->players[0]->socket, GAME_FINISHED_ID, strlen(message) + 1, message, server);
+	send_package(room->players[1]->socket, GAME_FINISHED_ID, strlen(message) + 1, message, server);
 	return;
 }
 
@@ -59,7 +60,7 @@ void is_your_turn(player* player, server* server) {
 	strcat(message, "\n");
 	strcat(message, "Elige las coordenadas donde quieres disparar (ej: A1)\n");
 
-	send_package(player->socket, PENDING_INFO_ID, strlen(message), message, server);
+	send_package(player->socket, PENDING_INFO_ID, strlen(message) + 1, message, server);
 }
 
 /*
@@ -73,7 +74,7 @@ void opponent_turn(char* opponent_name, int socket, server* server) {
 	strcat(message, "\n");
 	strcat(message, "Esperando a que el otro jugador elija coordenadas...\n");
 
-	send_package(socket, SEND_TEXT_ID, strlen(message), message, server);
+	send_package(socket, SEND_TEXT_ID, strlen(message) + 1, message, server);
 }
 
 /*
@@ -109,23 +110,23 @@ void update_board(char** board, char* coordinates, room* room, int shotted_playe
 	// check if in the board there is another boat with the same value
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 5; j++) {
-			if (players[shotted_player_id]->board[row][column] == value) {
+			if (players[shotted_player_id]->board[i][j] == value) {
 				strcpy(message, "Han impactado uno de tus barcos\n");
-				send_package(players[shotted_player_id]->socket, SEND_TEXT_ID, strlen(message), message, server);
+				send_package(players[shotted_player_id]->socket, SEND_TEXT_ID, strlen(message) + 1, message, server);
 
 				strcpy(message, "Has impactado un barco\n");
-				send_package(players[!shotted_player_id]->socket, SEND_TEXT_ID, strlen(message), message, server);
+				send_package(players[!shotted_player_id]->socket, SEND_TEXT_ID, strlen(message) + 1, message, server);
 				return;
 			}
 		}
 	}
 
 	// if there is not another boat with the same value, the boat is sunk
-	strcpy(message, "Has hundido un barco\n");
-	send_package(players[shotted_player_id]->socket, SEND_TEXT_ID, strlen(message), message, server);
-
 	strcpy(message, "Han hundido uno de tus barcos\n");
-	send_package(players[!shotted_player_id]->socket, SEND_TEXT_ID, strlen(message), message, server);
+	send_package(players[shotted_player_id]->socket, SEND_TEXT_ID, strlen(message) + 1, message, server);
+
+	strcpy(message, "Has hundido un barco\n");
+	send_package(players[!shotted_player_id]->socket, SEND_TEXT_ID, strlen(message) + 1, message, server);
 }
 
 /*
@@ -149,24 +150,29 @@ bool check_if_game_is_over(char** board) {
      El separador "|" es ficticio. El cliente tomará los primeros 25 caracteres como el tablero del
      jugador y los siguientes 25 como el tablero del oponente
 */
-void send_boards(room* room, char** board_0, char** board_1, server* server) {
+void send_boards(room* room, server* server) {
 	player* players[2];
 	players[0] = room->players[0];
 	players[1] = room->players[1];
 
-	char board_0_hide[25];
-	char board_1_hide[25];
+
+	char board_0_hide[26];
+	char board_1_hide[26];
+	board_0_hide[25] = '\0';
+	board_1_hide[25] = '\0';
 
 	// build opponent boards
-	opponent_board(board_0, board_0_hide);
-	opponent_board(board_1, board_1_hide);
+	opponent_board(players[0]->board, board_0_hide);
+	opponent_board(players[1]->board, board_1_hide);
 
-	char board_0_string[25];
-	char board_1_string[25];
+	char board_0_string[26];
+	char board_1_string[26];
+	board_0_string[25] = '\0';
+	board_1_string[25] = '\0';
 
 	// build player boards
-	board_to_string(board_0, board_0_string);
-	board_to_string(board_1, board_1_string);
+	board_to_string(players[0]->board, board_0_string);
+	board_to_string(players[1]->board, board_1_string);
 
 	char package_0[100];
 	char package_1[100];

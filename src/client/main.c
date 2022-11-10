@@ -152,7 +152,7 @@ int main (int argc, char *argv[]){
         free(grid[i]);
       }
       free(grid);
-      printf("¿Estás segur@ que desas continuar?\n"
+      printf("¿Quieres confirmar la posición de los barcos?\n"
                 "[0] No\n"
                 "[1] Sí\n");
       char* response = get_input();

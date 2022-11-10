@@ -162,16 +162,6 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 	message[0] = 0;
 	send_package(player->socket, 10, 1, message, server);
 
-	printf("\nAntes\n");
-	printf("P0: %d P1: %d\n", room->players[0] != NULL, room->players[1] != NULL);
-	if (room->players[0] != NULL) {
-		printf("P0 (%d): %s %s\n", room->players[0]->player_id, room->players[0]->name, room->players[0]->status);
-	}
-	if (room->players[1] != NULL) {
-		printf("P1 (%d): %s %s\n", room->players[1]->player_id, room->players[1]->name, room->players[1]->status);
-	}
-	printf("\n");
-
 	if (room->players[!player_id] != NULL && strcmp(room->players[!player_id]->status, "confirmed") == 0) {
 		// If the other player is still in the room, tell him that the other player left
 		strcpy(room->players[!player_id]->status, "waiting");
@@ -187,16 +177,6 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 			room->players[0]->player_id = 0;
 		}
 	}
-
-	printf("\nDespues\n");
-	printf("P0: %d P1: %d\n", room->players[0] != NULL, room->players[1] != NULL);
-	if (room->players[0] != NULL) {
-		printf("P0 (%d): %s %s\n", room->players[0]->player_id, room->players[0]->name, room->players[0]->status);
-	}
-	if (room->players[1] != NULL) {
-		printf("P1 (%d): %s %s\n", room->players[1]->player_id, room->players[1]->name, room->players[1]->status);
-	}
-	printf("\n");
 }
 
 
@@ -265,7 +245,7 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 	  int player_id = player->player_id;
 	  if (strcmp(room->players[!player_id]->status, "ready") == 0) {
 	    // If the other player is ready, start the game
-		send_boards(room, room->players[0]->board, room->players[1]->board, server);
+		send_boards(room, server);
 		is_your_turn(room->players[0], server);
 		opponent_turn(room->players[0]->name, room->players[1]->socket, server);
 	    } else {
@@ -287,15 +267,26 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 
 // Game phase handler. Player shoots opponent
 void handle_id_7(player* player, server* server, int id, int data_length, char* data) {
-	char coordinates[2];
-	coordinates[0] = data[0];
-	coordinates[1] = data[1];
-
-	char message[100];
-
 	int room_id = player->room_id;
 	room* room = &server->rooms[room_id];
 
+	if (strcmp(data, "bomb") == 0) {
+		game_over(room, server, player->player_id);
+		return;
+	}
+
+	char coordinates[3];
+	coordinates[0] = data[0];
+	coordinates[1] = data[1];
+	coordinates[2] = '\0';
+
+	printf("Player %s shoots at %c%c\n", player->name, coordinates[0], coordinates[1]);
+
+	char message[100];
+
+
+	printf("Player 0 (%d) %s\n", room->players[0]->player_id, room->players[0]->name);
+	printf("Player 1 (%d) %s\n", room->players[1]->player_id, room->players[1]->name);
 	struct player* opponent = room->players[!player->player_id];
 
 	// get boards
@@ -306,7 +297,7 @@ void handle_id_7(player* player, server* server, int id, int data_length, char* 
 	if (!check_coordinates(coordinates, opponent_board)) {
 		strcpy(message, "Coordenadas invalidas, intentalo nuevamente\n");
 		strcat(message, "Formato: <letra mayúscula><numero> (ej: B5)\n");
-		send_package(player->socket, PENDING_INFO_ID, strlen(message), message, server);
+		send_package(player->socket, PENDING_INFO_ID, strlen(message) + 1, message, server);
 		return;
 	}
 
@@ -314,10 +305,10 @@ void handle_id_7(player* player, server* server, int id, int data_length, char* 
 	strcpy(message, "Disparando a las coordenadas ");
 	strcat(message, coordinates);
 	strcat(message, "\n");
-	send_package(player->socket, SEND_TEXT_ID, strlen(message), message, server);
-	send_package(opponent->socket, SEND_TEXT_ID, strlen(message), message, server);
+	send_package(player->socket, SEND_TEXT_ID, strlen(message) + 1, message, server);
+	send_package(opponent->socket, SEND_TEXT_ID, strlen(message) + 1, message, server);
 
-	update_board(opponent_board, coordinates, room, player->player_id, server);
+	update_board(opponent_board, coordinates, room, opponent->player_id, server);
 
 	// If the game is over, send the signal to the players and the info
 	if (check_if_game_is_over(opponent_board)) {
@@ -326,7 +317,7 @@ void handle_id_7(player* player, server* server, int id, int data_length, char* 
 	}
 
 	// If the game is not over, send the boards to the players and continue the game
-	send_boards(room, player_board, opponent_board, server);
+	send_boards(room, server);
 
 	// "Change turn" message
 	is_your_turn(opponent, server);

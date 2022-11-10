@@ -32,7 +32,7 @@ void update_board(char** board, char* coordinates, room* room, int shotted_playe
 
 bool check_if_game_is_over(char** board);
 
-void send_boards(room* room, char** board_0, char** board_1, server* server);
+void send_boards(room* room, server* server);
 
 void opponent_board(char** board, char* output_board);
 
