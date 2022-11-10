@@ -160,13 +160,19 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 	char message[1];
 	message[0] = 0;
 	send_package(player->socket, 10, 1, message, server);
-
 	if (room->players[!player_id] != NULL && strcmp(room->players[!player_id]->status, "confirmed") == 0) {
 		// If the other player is still in the room, tell him that the other player left
 		strcpy(room->players[!player_id]->status, "waiting");
 		char message[1];
 		message[0] = 1;
 		send_package(room->players[!player_id]->socket, 10, 1, message, server);
+	}
+	if (player->player_id == 0) {
+		// If the player was the first one, tell the other player that the game was aborted
+		if (room->players[1] != NULL) {
+			room->players[0] = room->players[1];
+			room->players[1] = NULL;
+		}
 	}
 }
 
