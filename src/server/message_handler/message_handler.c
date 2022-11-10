@@ -61,7 +61,7 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 	}
 
 	room* room = &server->rooms[room_id];
-	printf("%d\n", room->n_players);
+
 	if (room->n_players == 2) {
 		// If the room is full, send error
 		send_package(player->socket, 1, 0, NULL, server);
@@ -160,6 +160,17 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 	char message[1];
 	message[0] = 0;
 	send_package(player->socket, 10, 1, message, server);
+
+	printf("\nAntes\n");
+	printf("P0: %d P1: %d\n", room->players[0] != NULL, room->players[1] != NULL);
+	if (room->players[0] != NULL) {
+		printf("P0 (%d): %s %s\n", room->players[0]->player_id, room->players[0]->name, room->players[0]->status);
+	}
+	if (room->players[1] != NULL) {
+		printf("P1 (%d): %s %s\n", room->players[1]->player_id, room->players[1]->name, room->players[1]->status);
+	}
+	printf("\n");
+
 	if (room->players[!player_id] != NULL && strcmp(room->players[!player_id]->status, "confirmed") == 0) {
 		// If the other player is still in the room, tell him that the other player left
 		strcpy(room->players[!player_id]->status, "waiting");
@@ -172,8 +183,19 @@ void handle_id_4(player* player, server* server, int id, int aux_data_length, ch
 		if (room->players[1] != NULL) {
 			room->players[0] = room->players[1];
 			room->players[1] = NULL;
+			room->players[0]->player_id = 0;
 		}
 	}
+
+	printf("\nDespues\n");
+	printf("P0: %d P1: %d\n", room->players[0] != NULL, room->players[1] != NULL);
+	if (room->players[0] != NULL) {
+		printf("P0 (%d): %s %s\n", room->players[0]->player_id, room->players[0]->name, room->players[0]->status);
+	}
+	if (room->players[1] != NULL) {
+		printf("P1 (%d): %s %s\n", room->players[1]->player_id, room->players[1]->name, room->players[1]->status);
+	}
+	printf("\n");
 }
 
 // Game phase handler. Player shoots opponent
