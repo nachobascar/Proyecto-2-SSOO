@@ -279,6 +279,9 @@ void handle_id_5(player* player, server* server, int id, int data_length, char* 
 
 // Confirm ships positions. Recieves 1 or 0
 void handle_id_6(player* player, server* server, int id, int data_length, char* data) {
+  if (player->board == NULL) {
+    return;
+  }
 	print_grid(player->board);
 	char confirm = data[0];
 	
@@ -319,6 +322,9 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 
 // Game phase handler. Player shoots opponent
 void handle_id_7(player* player, server* server, int id, int data_length, char* data) {
+  if (player->board == NULL) {
+    return;
+  }
 	int room_id = player->room_id;
 	room* room = &server->rooms[room_id];
 
