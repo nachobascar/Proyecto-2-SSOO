@@ -1,8 +1,23 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <signal.h>
 #include "helpers/conection.h"
 #include "helpers/comunication.h"
 #include "helpers/helpers.h"
+
+
+char IP[16];
+int PORT;
+
+// Signal handler
+void signal_handler(int signal) {
+    printf("Signal %d received, exiting...\n", signal);
+    free(IP);
+    close(PORT);
+    exit(0);
+}
+
+    
 
 char * get_input(){
   char * response = malloc(20);
@@ -19,6 +34,7 @@ char * get_input(){
 
 
 int main (int argc, char *argv[]){
+  signal(SIGINT, signal_handler);
   if (argc != 5) {
     printf("Usage: %s  -i <ip_address> -p <tcp_port>\n", argv[0]);
     exit(EXIT_FAILURE);
@@ -230,6 +246,16 @@ int main (int argc, char *argv[]){
       int payload_size;
       char * message = client_receive_payload(server_socket, &payload_size);
       printf("%s\n",message);
+      char* response = get_input();
+      if (response[0] == '1'){
+        client_send_message(server_socket, 9, response);
+      }
+      else{
+        // Close program
+        free(message);
+        free(response);
+        break;
+      }
       free(message);
     }
     if (msg_code == 9) { 
@@ -255,6 +281,15 @@ int main (int argc, char *argv[]){
         printf("El otro jugador ha abandonado la partida, espera mientras llega otro jugador\n");
       }
 
+      free(message);
+    }
+    if (msg_code == 11) {
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      printf("El otro jugador se ha desconectado, ¿Qué deseas hacer?\n [1] Esperar a que se reconecte\n [2] Salir de la sala\n");
+      int option = getchar() - '0';
+      getchar();
+      client_send_message(server_socket, 8, option);
       free(message);
     }
     printf("------------------\n");
