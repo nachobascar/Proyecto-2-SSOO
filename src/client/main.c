@@ -96,9 +96,14 @@ int main(int argc, char *argv[])
           printf("Sala %i: %i/%i jugadores  \n", message[i], message[i + 1], 2);
         }
 
-        printf("¿A qué sala desea entrar?\n");
+        printf("¿A qué sala desea entrar? ('x' para actualizar salas)\n");
+        
+        char * response = get_input();
+        if (response[0] == 'x') {
+          client_send_message(server_socket, 2, "");
+          continue;;
+        }
 
-        char *response = get_input();
         int room = atoi(response);
         free(response);
         char room_id[2];
@@ -155,7 +160,7 @@ int main(int argc, char *argv[])
       {
         printf("----- MENÚ DE PREPARACIÓN -----\n\n Para ingresar las coordenadas considera lo siguiente\n \t- Pueden estar separadas por un espacio o por Enter\n \t- Deben ser de la forma Letra Número (por ejemplo A1)\n \t- La letra puede estar en mayúsculas o minúsculas\n\n");
       }
-      for (int i = 26; i < payload_size; i++)
+      for (int i = 25; i < payload_size; i++)
       {
         printf("%c", message[i]);
       }
@@ -290,6 +295,7 @@ int main(int argc, char *argv[])
       {
         free(grid2[i]);
       }
+      free(grid2);
 
       free(message);
       free(message1);
@@ -356,6 +362,41 @@ int main(int argc, char *argv[])
       buffer[1] = '\0';
       getchar();
       client_send_message(server_socket, 8, buffer);
+      free(message);
+    }
+
+    if (msg_code == 20) {
+      int payload_size;
+      char * message = client_receive_payload(server_socket, &payload_size);
+      int size, n_blocks;
+      char name[50];
+      sscanf(message, "%d %d %s", &size, &n_blocks, name);
+
+      char **data = malloc(n_blocks * sizeof(char*));
+      int *block_size = malloc(n_blocks * sizeof(int));
+      for (int i = 0; i < n_blocks; i++){
+        data[i] = NULL;
+      }
+
+      int n_recieved = 0;
+
+      while(n_recieved < n_blocks){
+        int id = client_receive_id(server_socket);
+        int payload_size;
+        data[id] = client_receive_payload(server_socket, &payload_size);
+        block_size[id] = payload_size;
+        n_recieved++;
+      }
+
+      FILE *file = fopen(name, "wb");
+      for (int i = 0; i < n_blocks; i++){
+        fwrite(data[i], sizeof(char), block_size[i], file);
+        free(data[i]);
+      }
+      free(block_size);
+      free(data);
+      fclose(file);
+
       free(message);
     }
     printf("------------------\n");

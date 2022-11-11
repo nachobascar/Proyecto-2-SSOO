@@ -98,6 +98,7 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 	int room_id = data[0];
 	if (room_id >= server->rooms_size) {
 		printf("Invalid room id: %d\n", room_id);
+		send_package(player->socket, 1, 0, NULL, server);
 		return;
 	}
 
@@ -122,6 +123,7 @@ void handle_id_1(player* player, server* server, int id, int data_length, char* 
 		room->players[player_id] = player;
 		room->n_players++;
 		strcpy(player->status, "waiting");
+    strcpy(room->status, "waiting");
 
 		// Remove the player from the lobby
 		remove_player_from_lobby(player, &server->lobby);
@@ -292,6 +294,12 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 	if (confirm == '1') {
 	  // Game phase;
 	  strcpy(player->status, "ready");
+
+		if (room->players[!player_id]->disconnected) {
+			send_package(player->socket, 11, 0, NULL, server);
+			return;
+		}
+		
 	  if (strcmp(room->players[!player_id]->status, "ready") == 0) {
 	    // If the other player is ready, start the game
 			strcpy(room->status, "playing");
@@ -301,9 +309,6 @@ void handle_id_6(player* player, server* server, int id, int data_length, char* 
 			send_boards(room, server);
 			is_your_turn(room->players[0], server);
 			opponent_turn(room->players[0]->name, room->players[1]->socket, server);
-		} else if (room->players[!player_id]->disconnected) {
-			send_package(player->socket, 11, 0, NULL, server);
-			return;
 		} 
 	} else {
 		strcpy(player->status, "boat 2");

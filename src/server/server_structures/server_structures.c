@@ -2,7 +2,7 @@
 
 // Initialize the room
 void init_room(room* room) {
-  strcpy(room->status, "idle");
+  strcpy(room->status, "waiting");
   room->n_players = 0;
   for (int i = 0; i < 2; i++) {
     room->players[i] = NULL;
@@ -133,10 +133,12 @@ player* find_disconnected_player_on_room(char* name, int* room_id, int* player_i
 player* find_player_on_room_by_socket(int client_socket_fd, server* server) {
   for (int i = 0; i < server->rooms_size; i++) {
     room* room = &server->rooms[i];
-    if (room->n_players == 2) {
+    if (room->players[0]) {
       if (room->players[0]->socket == client_socket_fd) { 
         return room->players[0];
       }
+    }
+    if (room->players[1]) {
       if (room->players[1]->socket == client_socket_fd) {
         return room->players[1];
       }
