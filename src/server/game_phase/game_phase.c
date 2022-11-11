@@ -57,6 +57,9 @@ int send_winning_image(player* player, server* server) {
 		char aux_buffer[255];
 		send_package(player->socket, id++, size_to_send , buffer + i, server);
 	}
+
+	free(buffer);
+
 	return 1;
 }
 
